@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Configure Widget"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Data URL:" />
+    <EditText
+        android:id="@+id/edit_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="https://example.com/data.json"
+        android:inputType="textUri" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Background Color (HEX):"
+        android:layout_marginTop="16dp" />
+    <EditText
+        android:id="@+id/edit_bg_color"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="#FFFFFF"
+        android:text="#FFFFFF" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Transparency (0.0 to 1.0):"
+        android:layout_marginTop="16dp" />
+    <EditText
+        android:id="@+id/edit_bg_alpha"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="0.5"
+        android:text="1.0"
+        android:inputType="numberDecimal" />
+
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save and Add Widget"
+        android:layout_marginTop="24dp" />
+
+</LinearLayout>

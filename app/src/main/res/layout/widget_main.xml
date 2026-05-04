@@ -30,7 +30,18 @@
             android:background="@android:drawable/btn_default"
             android:padding="8dp"
             android:textSize="12sp"
-            android:text="Refresh Now"
+            android:text="Refresh"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/btn_setup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/btn_default"
+            android:padding="8dp"
+            android:textSize="12sp"
+            android:text="Setup"
+            android:layout_marginStart="8dp"
             android:textColor="@android:color/black" />
     </LinearLayout>
 

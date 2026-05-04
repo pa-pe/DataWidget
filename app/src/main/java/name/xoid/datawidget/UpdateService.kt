@@ -159,41 +159,34 @@ class UpdateService : Service() {
         Log.d("UpdateService", "updateWidget called for $appWidgetId")
         val root = RemoteViews(context.packageName, R.layout.widget_main)
         
-        // Setup toggle click on root
-        val toggleIntent = Intent(context, UpdateService::class.java).apply {
-            action = ACTION_TOGGLE_CONTROLS
-            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        }
-        val togglePendingIntent = android.app.PendingIntent.getService(
-            context, appWidgetId, toggleIntent, 
-            android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
-        )
-        root.setOnClickPendingIntent(R.id.widget_root, togglePendingIntent)
-
-        // Setup refresh click
-        val refreshIntent = Intent(context, UpdateService::class.java).apply {
-            action = ACTION_FORCE_REFRESH
-            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        }
-        val refreshPendingIntent = android.app.PendingIntent.getService(
-            context, appWidgetId + 10000, refreshIntent, 
-            android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
-        )
-        root.setOnClickPendingIntent(R.id.btn_refresh, refreshPendingIntent)
-
-        // Control visibility
-        val isVisible = controlsVisible[appWidgetId] ?: false
-        root.setViewVisibility(R.id.widget_controls, if (isVisible) View.VISIBLE else View.GONE)
-
-        root.removeAllViews(R.id.widget_container)
-
         try {
             val jsonString = cachedData[appWidgetId] 
                 ?: throw Exception("Waiting for data from GitHub...")
             val jsonObject = JSONObject(jsonString)
+
+            // Background color and transparency from WidgetSettings (User customization)
+            val userBgColor = WidgetSettings.getBgColor(context, appWidgetId)
+            val userBgAlpha = WidgetSettings.getBgAlpha(context, appWidgetId)
+            
+            // Fallback to JSON if user hasn't set anything? 
+            // For now, let's assume WidgetSettings always has a default (White, 1.0)
+            
+            val finalColor = Color.argb(
+                (userBgAlpha * 255).toInt().coerceIn(0, 255),
+                Color.red(userBgColor),
+                Color.green(userBgColor),
+                Color.blue(userBgColor)
+            )
+            root.setInt(R.id.widget_root, "setBackgroundColor", finalColor)
+
             val rowsArray = jsonObject.getJSONArray("rows")
 
             val currentTimeSeconds = System.currentTimeMillis() / 1000
+
+            // Re-apply control setup (I moved it during the previous edit, putting it back)
+            setupControls(context, root, appWidgetId)
+            
+            root.removeAllViews(R.id.widget_container)
 
             for (i in 0 until rowsArray.length()) {
                 val rowJson = rowsArray.getJSONObject(i)
@@ -243,6 +236,45 @@ class UpdateService : Service() {
         }
 
         appWidgetManager.updateAppWidget(appWidgetId, root)
+    }
+
+    private fun setupControls(context: android.content.Context, root: RemoteViews, appWidgetId: Int) {
+        // Setup toggle click on root
+        val toggleIntent = Intent(context, UpdateService::class.java).apply {
+            action = ACTION_TOGGLE_CONTROLS
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+        }
+        val togglePendingIntent = android.app.PendingIntent.getService(
+            context, appWidgetId, toggleIntent,
+            android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
+        )
+        root.setOnClickPendingIntent(R.id.widget_root, togglePendingIntent)
+
+        // Setup refresh click
+        val refreshIntent = Intent(context, UpdateService::class.java).apply {
+            action = ACTION_FORCE_REFRESH
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+        }
+        val refreshPendingIntent = android.app.PendingIntent.getService(
+            context, appWidgetId + 10000, refreshIntent,
+            android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
+        )
+        root.setOnClickPendingIntent(R.id.btn_refresh, refreshPendingIntent)
+
+        // Setup setup click
+        val setupIntent = Intent(context, WidgetConfigActivity::class.java).apply {
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        val setupPendingIntent = android.app.PendingIntent.getActivity(
+            context, appWidgetId + 20000, setupIntent,
+            android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
+        )
+        root.setOnClickPendingIntent(R.id.btn_setup, setupPendingIntent)
+
+        // Control visibility
+        val isVisible = controlsVisible[appWidgetId] ?: false
+        root.setViewVisibility(R.id.widget_controls, if (isVisible) View.VISIBLE else View.GONE)
     }
 
     private fun createNotificationChannel() {

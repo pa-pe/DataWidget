@@ -6,4 +6,5 @@
     android:updatePeriodMillis="0"
     android:previewImage="@mipmap/ic_launcher"
     android:resizeMode="horizontal|vertical"
-    android:widgetCategory="home_screen" />
+    android:widgetCategory="home_screen"
+    android:configure="name.xoid.datawidget.WidgetConfigActivity" />

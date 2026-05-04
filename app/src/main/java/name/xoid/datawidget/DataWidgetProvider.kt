@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.util.Log
 import android.widget.RemoteViews
 
@@ -23,6 +24,18 @@ class DataWidgetProvider : AppWidgetProvider() {
         // Set initial "Loading..." state
         for (appWidgetId in appWidgetIds) {
             val views = RemoteViews(context.packageName, R.layout.widget_main)
+            
+            // Apply background from settings
+            val bgColor = WidgetSettings.getBgColor(context, appWidgetId)
+            val bgAlpha = WidgetSettings.getBgAlpha(context, appWidgetId)
+            val finalColor = Color.argb(
+                (bgAlpha * 255).toInt().coerceIn(0, 255),
+                Color.red(bgColor),
+                Color.green(bgColor),
+                Color.blue(bgColor)
+            )
+            views.setInt(R.id.widget_root, "setBackgroundColor", finalColor)
+
             views.removeAllViews(R.id.widget_container)
             val loadingView = RemoteViews(context.packageName, R.layout.widget_col_12)
             loadingView.setTextViewText(R.id.item_text, "Initializing...")
