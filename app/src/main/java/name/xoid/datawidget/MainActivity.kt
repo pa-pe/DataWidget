@@ -13,6 +13,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import android.content.Intent
 import name.xoid.datawidget.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -41,10 +42,36 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
+        // Ensure service is running
+        val serviceIntent = Intent(this, UpdateService::class.java)
+        startForegroundService(serviceIntent)
+
         binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab).show()
+            val inputName = android.widget.EditText(this).apply { hint = "Name" }
+            val inputUrl = android.widget.EditText(this).apply { hint = "URL" }
+            val layout = android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+                addView(inputName)
+                addView(inputUrl)
+                setPadding(50, 40, 50, 10)
+            }
+
+            androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Add New Configuration")
+                .setView(layout)
+                .setPositiveButton("Add") { _, _ ->
+                    val name = inputName.text.toString()
+                    val url = inputUrl.text.toString()
+                    if (name.isNotEmpty() && url.isNotEmpty()) {
+                        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main) as NavHostFragment
+                        val currentFragment = navHostFragment.childFragmentManager.fragments.firstOrNull()
+                        if (currentFragment is ConfigListFragment) {
+                            currentFragment.addConfig(name, url)
+                        }
+                    }
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
         }
     }
 
@@ -59,7 +86,11 @@ class MainActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_about -> {
+                val navController = findNavController(R.id.nav_host_fragment_content_main)
+                navController.navigate(R.id.action_ConfigListFragment_to_AboutFragment)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

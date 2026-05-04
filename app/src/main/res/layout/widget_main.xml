@@ -10,7 +10,28 @@
     <LinearLayout
         android:id="@+id/widget_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical" />
+
+    <LinearLayout
+        android:id="@+id/widget_controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:gravity="center"
+        android:paddingTop="4dp">
+
+        <TextView
+            android:id="@+id/btn_refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/btn_default"
+            android:padding="8dp"
+            android:textSize="12sp"
+            android:text="Refresh Now"
+            android:textColor="@android:color/black" />
+    </LinearLayout>
 
 </LinearLayout>

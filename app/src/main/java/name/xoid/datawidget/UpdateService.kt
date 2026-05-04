@@ -10,31 +10,86 @@ import android.os.IBinder
 import android.widget.RemoteViews
 import java.util.Timer
 import java.util.TimerTask
+import android.graphics.Color
+import org.json.JSONObject
 import android.util.Log
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.Locale
+import kotlin.concurrent.thread
+import android.content.pm.ServiceInfo
+import android.os.Build
+import android.view.View
+import android.widget.Toast
 
 class UpdateService : Service() {
 
     private var timer: Timer? = null
     private var widgetIds = mutableSetOf<Int>()
+    private val cachedData = mutableMapOf<Int, String>()
+    private val nextFetchTime = mutableMapOf<Int, Long>()
+    private val controlsVisible = mutableMapOf<Int, Boolean>()
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onCreate() {
         super.onCreate()
+        
+        // Recover active widget IDs
+        val appWidgetManager = AppWidgetManager.getInstance(this)
+        val componentName = android.content.ComponentName(this, DataWidgetProvider::class.java)
+        val ids = appWidgetManager.getAppWidgetIds(componentName)
+        widgetIds.addAll(ids.toTypedArray())
+
         createNotificationChannel()
-        startForeground(NOTIFICATION_ID, createNotification())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            startForeground(
+                NOTIFICATION_ID,
+                createNotification(),
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+            )
+        } else {
+            startForeground(NOTIFICATION_ID, createNotification())
+        }
         startTimer()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d("UpdateService", "onStartCommand action: ${intent?.action}")
+        val appWidgetId = intent?.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID) ?: AppWidgetManager.INVALID_APPWIDGET_ID
+
         when (intent?.action) {
             ACTION_UPDATE_WIDGETS -> {
                 val ids = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS)
-                ids?.let { widgetIds.addAll(it.toTypedArray()) }
+                Log.d("UpdateService", "Received IDs: ${ids?.joinToString()}")
+                ids?.let { 
+                    widgetIds.addAll(it.toTypedArray())
+                    it.forEach { id -> 
+                        fetchData(id)
+                    }
+                    updateAllWidgets()
+                }
+            }
+            ACTION_TOGGLE_CONTROLS -> {
+                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                    controlsVisible[appWidgetId] = !(controlsVisible[appWidgetId] ?: false)
+                    updateWidget(this, AppWidgetManager.getInstance(this), appWidgetId)
+                }
+            }
+            ACTION_FORCE_REFRESH -> {
+                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                    fetchData(appWidgetId)
+                    Toast.makeText(this, "Refreshing...", Toast.LENGTH_SHORT).show()
+                }
             }
             ACTION_REMOVE_WIDGETS -> {
                 val ids = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS)
-                ids?.let { it.forEach { id -> widgetIds.remove(id) } }
+                ids?.let { 
+                    it.forEach { id -> 
+                        widgetIds.remove(id)
+                        cachedData.remove(id)
+                    } 
+                }
                 if (widgetIds.isEmpty()) stopSelf()
             }
         }
@@ -44,12 +99,53 @@ class UpdateService : Service() {
     private fun startTimer() {
         timer?.cancel()
         timer = Timer()
-        // Use schedule instead of scheduleAtFixedRate for better reliability on Android
         timer?.schedule(object : TimerTask() {
             override fun run() {
+                val currentTime = System.currentTimeMillis()
+                widgetIds.forEach { id ->
+                    val nextFetch = nextFetchTime[id] ?: 0L
+                    if (currentTime >= nextFetch) {
+                        // Avoid immediate re-trigger
+                        nextFetchTime[id] = currentTime + 10000 
+                        fetchData(id)
+                    }
+                }
                 updateAllWidgets()
             }
-        }, 0, 1000) // Update every 1 second
+        }, 0, AppConfig.UI_UPDATE_INTERVAL_MS)
+    }
+
+    private fun fetchData(appWidgetId: Int) {
+        val urlString = WidgetSettings.getUrl(this, appWidgetId) ?: AppConfig.DEFAULT_JSON_URL
+        thread {
+            try {
+                val url = URL(urlString)
+                val connection = url.openConnection() as HttpURLConnection
+                connection.connectTimeout = 5000
+                connection.readTimeout = 5000
+                val content = connection.inputStream.bufferedReader().use { it.readText() }
+                
+                cachedData[appWidgetId] = content
+                
+                // Parse intervals from JSON
+                val json = JSONObject(content)
+                val intervalSec = json.optLong("update_interval_sec", AppConfig.DEFAULT_FETCH_INTERVAL_SEC)
+                val nextAt = json.optLong("next_update_at", -1L) // timestamp in seconds
+                
+                nextFetchTime[appWidgetId] = if (nextAt > 0) {
+                    nextAt * 1000
+                } else {
+                    System.currentTimeMillis() + (intervalSec * 1000)
+                }
+                
+                Log.d("UpdateService", "Fetched data for $appWidgetId. Next fetch at ${nextFetchTime[appWidgetId]}")
+                updateAllWidgets() // Update UI immediately after fetch
+            } catch (e: Exception) {
+                Log.e("UpdateService", "Error fetching data", e)
+                // Retry in a bit on error
+                nextFetchTime[appWidgetId] = System.currentTimeMillis() + 10000
+            }
+        }
     }
 
     private fun updateAllWidgets() {
@@ -60,42 +156,90 @@ class UpdateService : Service() {
     }
 
     private fun updateWidget(context: android.content.Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
+        Log.d("UpdateService", "updateWidget called for $appWidgetId")
         val root = RemoteViews(context.packageName, R.layout.widget_main)
+        
+        // Setup toggle click on root
+        val toggleIntent = Intent(context, UpdateService::class.java).apply {
+            action = ACTION_TOGGLE_CONTROLS
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+        }
+        val togglePendingIntent = android.app.PendingIntent.getService(
+            context, appWidgetId, toggleIntent, 
+            android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
+        )
+        root.setOnClickPendingIntent(R.id.widget_root, togglePendingIntent)
+
+        // Setup refresh click
+        val refreshIntent = Intent(context, UpdateService::class.java).apply {
+            action = ACTION_FORCE_REFRESH
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+        }
+        val refreshPendingIntent = android.app.PendingIntent.getService(
+            context, appWidgetId + 10000, refreshIntent, 
+            android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
+        )
+        root.setOnClickPendingIntent(R.id.btn_refresh, refreshPendingIntent)
+
+        // Control visibility
+        val isVisible = controlsVisible[appWidgetId] ?: false
+        root.setViewVisibility(R.id.widget_controls, if (isVisible) View.VISIBLE else View.GONE)
+
         root.removeAllViews(R.id.widget_container)
 
-        // Mocking JSON data for different widgets
-        val rows = if (appWidgetId % 2 == 0) {
-            // Widget A: One row with 3 columns
-            listOf(listOf("4", "4", "4"))
-        } else {
-            // Widget B: Two rows
-            listOf(listOf("6", "6"), listOf("12"))
-        }
+        try {
+            val jsonString = cachedData[appWidgetId] 
+                ?: throw Exception("Waiting for data from GitHub...")
+            val jsonObject = JSONObject(jsonString)
+            val rowsArray = jsonObject.getJSONArray("rows")
 
-        val currentTime = System.currentTimeMillis() / 1000
-        val remaining = 60 - (currentTime % 60) // Simple countdown to the next minute
+            val currentTimeSeconds = System.currentTimeMillis() / 1000
 
-        for (rowCols in rows) {
-            val rowView = RemoteViews(context.packageName, R.layout.widget_row)
-            for (colWeight in rowCols) {
-                val cellLayout = when (colWeight) {
-                    "6" -> R.layout.widget_col_6
-                    "4" -> R.layout.widget_col_4
-                    else -> R.layout.widget_col_12
+            for (i in 0 until rowsArray.length()) {
+                val rowJson = rowsArray.getJSONObject(i)
+                val colsArray = rowJson.getJSONArray("cols")
+                val rowView = RemoteViews(context.packageName, R.layout.widget_row)
+
+                for (j in 0 until colsArray.length()) {
+                    val colJson = colsArray.getJSONObject(j)
+                    val weight = colJson.optString("weight", "12")
+                    val cellLayout = when (weight) {
+                        "6" -> R.layout.widget_col_6
+                        "4" -> R.layout.widget_col_4
+                        else -> R.layout.widget_col_12
+                    }
+                    val cellView = RemoteViews(context.packageName, cellLayout)
+
+                    if (colJson.optString("type") == "countdown") {
+                        val target = colJson.getLong("target_timestamp")
+                        val diff = target - currentTimeSeconds
+                        val text = if (diff > 0) {
+                            val days = diff / 86400
+                            val hours = (diff % 86400) / 3600
+                            val minutes = (diff % 3600) / 60
+                            val seconds = diff % 60
+                            String.format(Locale.US, "%dd %02d:%02d:%02d", days, hours, minutes, seconds)
+                        } else {
+                            "Happy New Year!"
+                        }
+                        cellView.setTextViewText(R.id.item_text, text)
+                        
+                        val colorStr = colJson.optString("color", "#000000")
+                        cellView.setTextColor(R.id.item_text, Color.parseColor(colorStr))
+                    } else {
+                        cellView.setTextViewText(R.id.item_text, colJson.optString("text", ""))
+                    }
+
+                    rowView.addView(R.id.row_container, cellView)
                 }
-                val cellView = RemoteViews(context.packageName, cellLayout)
-                
-                // If it's the last column of the first row, show the countdown
-                if (colWeight == rowCols.last() && rowCols == rows.first()) {
-                    cellView.setTextViewText(R.id.item_text, "T-minus: $remaining")
-                    cellView.setTextColor(R.id.item_text, android.graphics.Color.RED)
-                } else {
-                    cellView.setTextViewText(R.id.item_text, "ID:$appWidgetId col-$colWeight")
-                }
-                
-                rowView.addView(R.id.row_container, cellView)
+                root.addView(R.id.widget_container, rowView)
             }
-            root.addView(R.id.widget_container, rowView)
+        } catch (e: Exception) {
+            Log.e("UpdateService", "Error parsing JSON", e)
+            // Show error on widget
+            val errorView = RemoteViews(context.packageName, R.layout.widget_col_12)
+            errorView.setTextViewText(R.id.item_text, "Error: ${e.message}")
+            root.addView(R.id.widget_container, errorView)
         }
 
         appWidgetManager.updateAppWidget(appWidgetId, root)
@@ -122,11 +266,26 @@ class UpdateService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         timer?.cancel()
+        updateAllWidgetsWithStatus("Update service stopped.")
+    }
+
+    private fun updateAllWidgetsWithStatus(status: String) {
+        val appWidgetManager = AppWidgetManager.getInstance(this)
+        for (id in widgetIds) {
+            val root = RemoteViews(packageName, R.layout.widget_main)
+            root.removeAllViews(R.id.widget_container)
+            val statusView = RemoteViews(packageName, R.layout.widget_col_12)
+            statusView.setTextViewText(R.id.item_text, status)
+            root.addView(R.id.widget_container, statusView)
+            appWidgetManager.updateAppWidget(id, root)
+        }
     }
 
     companion object {
         const val ACTION_UPDATE_WIDGETS = "name.xoid.datawidget.ACTION_UPDATE_WIDGETS"
         const val ACTION_REMOVE_WIDGETS = "name.xoid.datawidget.ACTION_REMOVE_WIDGETS"
+        const val ACTION_TOGGLE_CONTROLS = "name.xoid.datawidget.ACTION_TOGGLE_CONTROLS"
+        const val ACTION_FORCE_REFRESH = "name.xoid.datawidget.ACTION_FORCE_REFRESH"
         const val NOTIFICATION_ID = 1
         const val CHANNEL_ID = "update_service_channel"
     }

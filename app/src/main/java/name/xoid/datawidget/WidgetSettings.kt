@@ -13,7 +13,7 @@ object WidgetSettings {
 
     fun getUrl(context: Context, appWidgetId: Int): String? {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        return prefs.getString(KEY_URL_PREFIX + appWidgetId, "https://api.example.com/data/$appWidgetId")
+        return prefs.getString(KEY_URL_PREFIX + appWidgetId, null)
     }
 
     fun deleteUrl(context: Context, appWidgetId: Int) {
