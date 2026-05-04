@@ -1,0 +1,18 @@
+{
+  "rows": [
+    {
+      "cols": [
+        {
+          "text": "Until 2030 left:",
+          "weight": "6"
+        },
+        {
+          "type": "countdown",
+          "target_timestamp": 1893456000,
+          "weight": "6",
+          "color": "#FF0000"
+        }
+      ]
+    }
+  ]
+}
