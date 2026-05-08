@@ -21,6 +21,7 @@ import android.content.pm.ServiceInfo
 import android.os.Build
 import android.view.View
 import android.widget.Toast
+import android.view.Gravity
 
 class UpdateService : Service() {
 
@@ -222,6 +223,14 @@ class UpdateService : Service() {
 
                     val colorStr = colJson.optString("color", "#000000")
                     cellView.setTextColor(R.id.item_text, ColorUtils.parseColor(colorStr))
+
+                    val align = colJson.optString("align", "left")
+                    val gravity = when (align.lowercase()) {
+                        "right" -> Gravity.END or Gravity.CENTER_VERTICAL
+                        "center" -> Gravity.CENTER
+                        else -> Gravity.START or Gravity.CENTER_VERTICAL
+                    }
+                    cellView.setInt(R.id.item_text, "setGravity", gravity)
 
                     rowView.addView(R.id.row_container, cellView)
                 }

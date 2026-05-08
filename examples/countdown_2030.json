@@ -12,7 +12,8 @@
           "type": "countdown",
           "target_timestamp": 1893456000,
           "weight": "6",
-          "color": "#FF0000"
+          "color": "#FF0000",
+          "align": "right"
         }
       ]
     }
