@@ -69,6 +69,15 @@ A row is a horizontal container for columns.
 You can find more JSON templates in the `/examples` directory of this repository:
 - `countdown_2030.json`: A simple layout with a text label and a live countdown timer.
 
+## Battery Optimization & Privacy
+
+By default, the **"Update only when screen is on"** setting is enabled. 
+
+- **Pros**: Significantly saves battery and network traffic by pausing all activities when the device is not in use.
+- **Cons/Privacy Note**: Since the widget immediately fetches fresh data as soon as the screen is turned on, your server logs may reveal patterns of when you use your phone. 
+
+If you prefer continuous background updates or wish to avoid revealing usage patterns to the server, you can disable this optimization in the widget **Setup** screen.
+
 ## Setup
 
 1. Host your JSON file (e.g., on GitHub Gist or Raw).

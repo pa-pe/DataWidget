@@ -97,6 +97,10 @@ class ConfigListFragment : Fragment() {
             setText(config.bgAlpha.toString())
             inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
         }
+        val inputScreenOn = android.widget.CheckBox(context).apply {
+            text = "Update only when screen is on"
+            isChecked = config.updateOnlyScreenOn
+        }
 
         val layout = android.widget.LinearLayout(context).apply {
             orientation = android.widget.LinearLayout.VERTICAL
@@ -104,6 +108,7 @@ class ConfigListFragment : Fragment() {
             addView(inputUrl)
             addView(inputBgColor)
             addView(inputBgAlpha)
+            addView(inputScreenOn)
             setPadding(50, 40, 50, 10)
         }
 
@@ -116,6 +121,7 @@ class ConfigListFragment : Fragment() {
                     config.url = inputUrl.text.toString()
                     config.bgColor = inputBgColor.text.toString()
                     config.bgAlpha = inputBgAlpha.text.toString().toFloat().coerceIn(0f, 1f)
+                    config.updateOnlyScreenOn = inputScreenOn.isChecked
                     
                     ConfigManager.saveConfigs(requireContext(), configs)
                     refreshList()

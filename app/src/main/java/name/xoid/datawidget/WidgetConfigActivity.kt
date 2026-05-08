@@ -39,15 +39,18 @@ class WidgetConfigActivity : AppCompatActivity() {
         val currentUrl = WidgetSettings.getUrl(this, appWidgetId) ?: AppConfig.DEFAULT_JSON_URL
         val currentColor = WidgetSettings.getBgColor(this, appWidgetId)
         val currentAlpha = WidgetSettings.getBgAlpha(this, appWidgetId)
+        val currentScreenOn = WidgetSettings.getScreenOnOnly(this, appWidgetId)
 
         binding.editUrl.setText(currentUrl)
         binding.editBgColor.setText(String.format("#%06X", (0xFFFFFF and currentColor)))
         binding.editBgAlpha.setText(currentAlpha.toString())
+        binding.checkScreenOn.isChecked = currentScreenOn
 
         binding.btnSave.setOnClickListener {
             val url = binding.editUrl.text.toString()
             val colorStr = binding.editBgColor.text.toString()
             val alphaStr = binding.editBgAlpha.text.toString()
+            val screenOnOnly = binding.checkScreenOn.isChecked
 
             if (url.isEmpty()) {
                 Toast.makeText(this, "URL cannot be empty", Toast.LENGTH_SHORT).show()
@@ -59,7 +62,7 @@ class WidgetConfigActivity : AppCompatActivity() {
                 val alpha = alphaStr.toFloat().coerceIn(0f, 1f)
 
                 WidgetSettings.saveUrl(this, appWidgetId, url)
-                WidgetSettings.saveBgSettings(this, appWidgetId, color, alpha)
+                WidgetSettings.saveBgSettings(this, appWidgetId, color, alpha, screenOnOnly)
 
                 // Also add/update in the global config library
                 val configs = ConfigManager.getConfigs(this)
@@ -67,8 +70,9 @@ class WidgetConfigActivity : AppCompatActivity() {
                 if (existing != null) {
                     existing.bgColor = colorStr
                     existing.bgAlpha = alpha
+                    existing.updateOnlyScreenOn = screenOnOnly
                 } else {
-                    configs.add(WidgetConfig("Widget $appWidgetId", url, colorStr, alpha))
+                    configs.add(WidgetConfig("Widget $appWidgetId", url, colorStr, alpha, screenOnOnly))
                 }
                 ConfigManager.saveConfigs(this, configs)
 

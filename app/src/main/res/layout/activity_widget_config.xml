@@ -62,6 +62,14 @@
             android:hint="1.0"
             android:text="1.0"
             android:inputType="numberDecimal"
+            android:layout_marginBottom="16dp" />
+
+        <CheckBox
+            android:id="@+id/check_screen_on"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Update only when screen is on"
+            android:checked="true"
             android:layout_marginBottom="24dp" />
 
         <Button

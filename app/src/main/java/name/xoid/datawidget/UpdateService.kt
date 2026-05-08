@@ -22,6 +22,8 @@ import android.os.Build
 import android.view.View
 import android.widget.Toast
 import android.view.Gravity
+import android.os.PowerManager
+import android.content.Context
 
 class UpdateService : Service() {
 
@@ -100,13 +102,24 @@ class UpdateService : Service() {
     private fun startTimer() {
         timer?.cancel()
         timer = Timer()
+        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        
         timer?.schedule(object : TimerTask() {
             override fun run() {
                 val currentTime = System.currentTimeMillis()
+                val isScreenOn = powerManager.isInteractive
+
                 widgetIds.forEach { id ->
+                    val onlyScreenOn = WidgetSettings.getScreenOnOnly(this@UpdateService, id)
+                    
+                    // Skip fetching if screen is off and setting is enabled
+                    if (onlyScreenOn && !isScreenOn) {
+                        return@forEach
+                    }
+
                     val nextFetch = nextFetchTime[id] ?: 0L
                     if (currentTime >= nextFetch) {
-                        // Avoid immediate re-trigger
+                        // Avoid immediate re-trigger by setting a temporary future time
                         nextFetchTime[id] = currentTime + 10000 
                         fetchData(id)
                     }
@@ -151,7 +164,15 @@ class UpdateService : Service() {
 
     private fun updateAllWidgets() {
         val appWidgetManager = AppWidgetManager.getInstance(this)
+        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        val isScreenOn = powerManager.isInteractive
+
         for (id in widgetIds) {
+            val onlyScreenOn = WidgetSettings.getScreenOnOnly(this, id)
+            if (onlyScreenOn && !isScreenOn) {
+                // Skip update to save battery
+                continue
+            }
             updateWidget(this, appWidgetManager, id)
         }
     }
