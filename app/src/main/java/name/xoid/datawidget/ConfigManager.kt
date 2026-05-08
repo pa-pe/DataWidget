@@ -38,6 +38,8 @@ object ConfigManager {
             val obj = JSONObject()
             obj.put("name", it.name)
             obj.put("url", it.url)
+            obj.put("bg_color", it.bgColor)
+            obj.put("bg_alpha", it.bgAlpha.toDouble())
             array.put(obj)
         }
         prefs.edit().putString(KEY_CONFIG_LIST, array.toString()).apply()
@@ -59,7 +61,12 @@ object ConfigManager {
             val array = JSONArray(json)
             for (i in 0 until array.length()) {
                 val obj = array.getJSONObject(i)
-                list.add(WidgetConfig(obj.getString("name"), obj.getString("url")))
+                list.add(WidgetConfig(
+                    obj.getString("name"),
+                    obj.getString("url"),
+                    obj.optString("bg_color", "#FFFFFF"),
+                    obj.optDouble("bg_alpha", 1.0).toFloat()
+                ))
             }
         } catch (e: Exception) {
             list.add(WidgetConfig("Countdown 2030 (GitHub)", AppConfig.DEFAULT_JSON_URL))

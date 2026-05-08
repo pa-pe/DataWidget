@@ -1,60 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:fitsSystemWindows="true"
-    android:padding="16dp">
+    android:background="?android:attr/windowBackground">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Configure Widget"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="16dp" />
+        android:orientation="vertical"
+        android:paddingHorizontal="32dp"
+        android:paddingVertical="24dp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Data URL:" />
-    <EditText
-        android:id="@+id/edit_url"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="https://example.com/data.json"
-        android:inputType="textUri" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Configure Widget"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp"
+            android:textAlignment="center" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Background Color (HEX):"
-        android:layout_marginTop="16dp" />
-    <EditText
-        android:id="@+id/edit_bg_color"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="#FFFFFF"
-        android:text="#FFFFFF" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Data URL"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+        <EditText
+            android:id="@+id/edit_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="https://example.com/data.json"
+            android:inputType="textUri"
+            android:layout_marginBottom="16dp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Transparency (0.0 to 1.0):"
-        android:layout_marginTop="16dp" />
-    <EditText
-        android:id="@+id/edit_bg_alpha"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="0.5"
-        android:text="1.0"
-        android:inputType="numberDecimal" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Background Color (HEX)"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+        <EditText
+            android:id="@+id/edit_bg_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="#FFFFFF"
+            android:text="#FFFFFF"
+            android:layout_marginBottom="16dp" />
 
-    <Button
-        android:id="@+id/btn_save"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Save and Add Widget"
-        android:layout_marginTop="24dp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Transparency (0.0 to 1.0)"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+        <EditText
+            android:id="@+id/edit_bg_alpha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="1.0"
+            android:text="1.0"
+            android:inputType="numberDecimal"
+            android:layout_marginBottom="24dp" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save and Update Widget"
+            android:padding="12dp" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -88,10 +88,22 @@ class ConfigListFragment : Fragment() {
             hint = "URL" 
             setText(config.url)
         }
+        val inputBgColor = android.widget.EditText(context).apply { 
+            hint = "BG Color (HEX)" 
+            setText(config.bgColor)
+        }
+        val inputBgAlpha = android.widget.EditText(context).apply { 
+            hint = "Transparency (0.0 - 1.0)" 
+            setText(config.bgAlpha.toString())
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+        }
+
         val layout = android.widget.LinearLayout(context).apply {
             orientation = android.widget.LinearLayout.VERTICAL
             addView(inputName)
             addView(inputUrl)
+            addView(inputBgColor)
+            addView(inputBgAlpha)
             setPadding(50, 40, 50, 10)
         }
 
@@ -99,10 +111,17 @@ class ConfigListFragment : Fragment() {
             .setTitle("Edit Configuration")
             .setView(layout)
             .setPositiveButton("Save") { _, _ ->
-                config.name = inputName.text.toString()
-                config.url = inputUrl.text.toString()
-                ConfigManager.saveConfigs(requireContext(), configs)
-                refreshList()
+                try {
+                    config.name = inputName.text.toString()
+                    config.url = inputUrl.text.toString()
+                    config.bgColor = inputBgColor.text.toString()
+                    config.bgAlpha = inputBgAlpha.text.toString().toFloat().coerceIn(0f, 1f)
+                    
+                    ConfigManager.saveConfigs(requireContext(), configs)
+                    refreshList()
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Invalid data", Toast.LENGTH_SHORT).show()
+                }
             }
             .setNegativeButton("Cancel", null)
             .show()
