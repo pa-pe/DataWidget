@@ -1,6 +1,5 @@
 package name.xoid.datawidget
 
-import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.graphics.Color
@@ -56,7 +55,7 @@ class WidgetConfigActivity : AppCompatActivity() {
             }
 
             try {
-                val color = Color.parseColor(colorStr)
+                val color = ColorUtils.parseColor(colorStr)
                 val alpha = alphaStr.toFloat().coerceIn(0f, 1f)
 
                 WidgetSettings.saveUrl(this, appWidgetId, url)

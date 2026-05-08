@@ -216,12 +216,12 @@ class UpdateService : Service() {
                             "Happy New Year!"
                         }
                         cellView.setTextViewText(R.id.item_text, text)
-                        
-                        val colorStr = colJson.optString("color", "#000000")
-                        cellView.setTextColor(R.id.item_text, Color.parseColor(colorStr))
                     } else {
                         cellView.setTextViewText(R.id.item_text, colJson.optString("text", ""))
                     }
+
+                    val colorStr = colJson.optString("color", "#000000")
+                    cellView.setTextColor(R.id.item_text, ColorUtils.parseColor(colorStr))
 
                     rowView.addView(R.id.row_container, cellView)
                 }
