@@ -70,7 +70,32 @@
             android:layout_height="wrap_content"
             android:text="Update only when screen is on"
             android:checked="true"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Progress Bar Visibility"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+        <RadioGroup
+            android:id="@+id/radio_progress_vis"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp">
+            <RadioButton
+                android:id="@+id/radio_always"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Always Show"
+                android:checked="true" />
+            <RadioButton
+                android:id="@+id/radio_on_tap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Show only on Tap" />
+        </RadioGroup>
 
         <Button
             android:id="@+id/btn_save"

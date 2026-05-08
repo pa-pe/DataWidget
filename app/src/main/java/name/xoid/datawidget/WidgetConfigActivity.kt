@@ -40,17 +40,24 @@ class WidgetConfigActivity : AppCompatActivity() {
         val currentColor = WidgetSettings.getBgColor(this, appWidgetId)
         val currentAlpha = WidgetSettings.getBgAlpha(this, appWidgetId)
         val currentScreenOn = WidgetSettings.getScreenOnOnly(this, appWidgetId)
+        val currentProgVis = WidgetSettings.getProgressVisibility(this, appWidgetId)
 
         binding.editUrl.setText(currentUrl)
         binding.editBgColor.setText(String.format("#%06X", (0xFFFFFF and currentColor)))
         binding.editBgAlpha.setText(currentAlpha.toString())
         binding.checkScreenOn.isChecked = currentScreenOn
+        if (currentProgVis == "on_tap") {
+            binding.radioOnTap.isChecked = true
+        } else {
+            binding.radioAlways.isChecked = true
+        }
 
         binding.btnSave.setOnClickListener {
             val url = binding.editUrl.text.toString()
             val colorStr = binding.editBgColor.text.toString()
             val alphaStr = binding.editBgAlpha.text.toString()
             val screenOnOnly = binding.checkScreenOn.isChecked
+            val progVis = if (binding.radioOnTap.isChecked) "on_tap" else "always"
 
             if (url.isEmpty()) {
                 Toast.makeText(this, "URL cannot be empty", Toast.LENGTH_SHORT).show()
@@ -62,7 +69,7 @@ class WidgetConfigActivity : AppCompatActivity() {
                 val alpha = alphaStr.toFloat().coerceIn(0f, 1f)
 
                 WidgetSettings.saveUrl(this, appWidgetId, url)
-                WidgetSettings.saveBgSettings(this, appWidgetId, color, alpha, screenOnOnly)
+                WidgetSettings.saveBgSettings(this, appWidgetId, color, alpha, screenOnOnly, progVis)
 
                 // Also add/update in the global config library
                 val configs = ConfigManager.getConfigs(this)
@@ -71,8 +78,9 @@ class WidgetConfigActivity : AppCompatActivity() {
                     existing.bgColor = colorStr
                     existing.bgAlpha = alpha
                     existing.updateOnlyScreenOn = screenOnOnly
+                    existing.progressVisibility = progVis
                 } else {
-                    configs.add(WidgetConfig("Widget $appWidgetId", url, colorStr, alpha, screenOnOnly))
+                    configs.add(WidgetConfig("Widget $appWidgetId", url, colorStr, alpha, screenOnOnly, progVis))
                 }
                 ConfigManager.saveConfigs(this, configs)
 

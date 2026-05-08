@@ -101,6 +101,20 @@ class ConfigListFragment : Fragment() {
             text = "Update only when screen is on"
             isChecked = config.updateOnlyScreenOn
         }
+        val inputProgressVis = android.widget.RadioGroup(context).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            val rbAlways = android.widget.RadioButton(context).apply { 
+                id = View.generateViewId()
+                text = "Always Show Progress" 
+            }
+            val rbOnTap = android.widget.RadioButton(context).apply { 
+                id = View.generateViewId()
+                text = "Show Progress on Tap" 
+            }
+            addView(rbAlways)
+            addView(rbOnTap)
+            if (config.progressVisibility == "on_tap") rbOnTap.isChecked = true else rbAlways.isChecked = true
+        }
 
         val layout = android.widget.LinearLayout(context).apply {
             orientation = android.widget.LinearLayout.VERTICAL
@@ -109,6 +123,8 @@ class ConfigListFragment : Fragment() {
             addView(inputBgColor)
             addView(inputBgAlpha)
             addView(inputScreenOn)
+            addView(android.widget.TextView(context).apply { text = "Progress Bar Visibility"; setPadding(0, 10, 0, 0) })
+            addView(inputProgressVis)
             setPadding(50, 40, 50, 10)
         }
 
@@ -122,6 +138,12 @@ class ConfigListFragment : Fragment() {
                     config.bgColor = inputBgColor.text.toString()
                     config.bgAlpha = inputBgAlpha.text.toString().toFloat().coerceIn(0f, 1f)
                     config.updateOnlyScreenOn = inputScreenOn.isChecked
+                    
+                    val selectedId = inputProgressVis.checkedRadioButtonId
+                    config.progressVisibility = if (selectedId != -1) {
+                        val rb = inputProgressVis.findViewById<android.widget.RadioButton>(selectedId)
+                        if (rb.text.toString().contains("Tap")) "on_tap" else "always"
+                    } else "always"
                     
                     ConfigManager.saveConfigs(requireContext(), configs)
                     refreshList()

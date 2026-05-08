@@ -41,6 +41,7 @@ object ConfigManager {
             obj.put("bg_color", it.bgColor)
             obj.put("bg_alpha", it.bgAlpha.toDouble())
             obj.put("screen_on_only", it.updateOnlyScreenOn)
+            obj.put("progress_visibility", it.progressVisibility)
             array.put(obj)
         }
         prefs.edit().putString(KEY_CONFIG_LIST, array.toString()).apply()
@@ -67,7 +68,8 @@ object ConfigManager {
                     obj.getString("url"),
                     obj.optString("bg_color", "#FFFFFF"),
                     obj.optDouble("bg_alpha", 1.0).toFloat(),
-                    obj.optBoolean("screen_on_only", true)
+                    obj.optBoolean("screen_on_only", true),
+                    obj.optString("progress_visibility", "always")
                 ))
             }
         } catch (e: Exception) {

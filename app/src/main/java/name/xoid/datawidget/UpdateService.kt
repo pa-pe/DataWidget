@@ -208,7 +208,13 @@ class UpdateService : Service() {
             )
             root.setInt(R.id.widget_root, "setBackgroundColor", finalColor)
 
-            // Update fetch progress bar
+            // Update fetch progress bar visibility and value
+            val progVis = WidgetSettings.getProgressVisibility(context, appWidgetId)
+            val isControlsVisible = controlsVisible[appWidgetId] ?: false
+            val shouldShowProgress = if (progVis == "on_tap") isControlsVisible else true
+            
+            root.setViewVisibility(R.id.fetch_progress, if (shouldShowProgress) View.VISIBLE else View.GONE)
+
             val hasError = fetchError[appWidgetId] ?: false
             if (hasError) {
                 root.setProgressBar(R.id.fetch_progress, 1000, 1000, false)
