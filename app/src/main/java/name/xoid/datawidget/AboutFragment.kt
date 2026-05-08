@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import name.xoid.datawidget.databinding.FragmentAboutBinding
 
+import androidx.core.content.pm.PackageInfoCompat
+
 class AboutFragment : Fragment() {
 
     private var _binding: FragmentAboutBinding? = null
@@ -22,7 +24,13 @@ class AboutFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.textviewAbout.text = "Data Widget\nVersion 1.0\n\nDisplay remote JSON data on your home screen."
+        
+        val context = requireContext()
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        val versionName = packageInfo.versionName
+        val versionCode = PackageInfoCompat.getLongVersionCode(packageInfo)
+
+        binding.textviewAbout.text = "Data Widget\nVersion: $versionName\nBuild: $versionCode\n\nDisplay remote JSON data on your home screen."
     }
 
     override fun onDestroyView() {
