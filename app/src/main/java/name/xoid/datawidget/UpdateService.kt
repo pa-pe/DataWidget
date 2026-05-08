@@ -31,6 +31,8 @@ class UpdateService : Service() {
     private var widgetIds = mutableSetOf<Int>()
     private val cachedData = mutableMapOf<Int, String>()
     private val nextFetchTime = mutableMapOf<Int, Long>()
+    private val lastFetchTime = mutableMapOf<Int, Long>()
+    private val fetchError = mutableMapOf<Int, Boolean>()
     private val controlsVisible = mutableMapOf<Int, Boolean>()
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -140,6 +142,9 @@ class UpdateService : Service() {
                 val content = connection.inputStream.bufferedReader().use { it.readText() }
                 
                 cachedData[appWidgetId] = content
+                fetchError[appWidgetId] = false
+                val now = System.currentTimeMillis()
+                lastFetchTime[appWidgetId] = now
                 
                 // Parse intervals from JSON
                 val json = JSONObject(content)
@@ -149,15 +154,17 @@ class UpdateService : Service() {
                 nextFetchTime[appWidgetId] = if (nextAt > 0) {
                     nextAt * 1000
                 } else {
-                    System.currentTimeMillis() + (intervalSec * 1000)
+                    now + (intervalSec * 1000)
                 }
                 
                 Log.d("UpdateService", "Fetched data for $appWidgetId. Next fetch at ${nextFetchTime[appWidgetId]}")
                 updateAllWidgets() // Update UI immediately after fetch
             } catch (e: Exception) {
                 Log.e("UpdateService", "Error fetching data", e)
+                fetchError[appWidgetId] = true
                 // Retry in a bit on error
                 nextFetchTime[appWidgetId] = System.currentTimeMillis() + 10000
+                updateAllWidgets() // Show error state immediately
             }
         }
     }
@@ -200,6 +207,23 @@ class UpdateService : Service() {
                 Color.blue(userBgColor)
             )
             root.setInt(R.id.widget_root, "setBackgroundColor", finalColor)
+
+            // Update fetch progress bar
+            val hasError = fetchError[appWidgetId] ?: false
+            if (hasError) {
+                root.setProgressBar(R.id.fetch_progress, 1000, 1000, false)
+            } else {
+                val next = nextFetchTime[appWidgetId] ?: 0L
+                val last = lastFetchTime[appWidgetId] ?: 0L
+                if (next > last) {
+                    val total = next - last
+                    val elapsed = System.currentTimeMillis() - last
+                    val progress = (elapsed.toDouble() / total * 1000).toInt().coerceIn(0, 1000)
+                    root.setProgressBar(R.id.fetch_progress, 1000, progress, false)
+                } else {
+                    root.setProgressBar(R.id.fetch_progress, 1000, 0, false)
+                }
+            }
 
             val rowsArray = jsonObject.getJSONArray("rows")
 

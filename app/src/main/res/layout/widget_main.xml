@@ -4,45 +4,61 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:orientation="vertical"
-    android:padding="8dp">
+    android:orientation="vertical">
+
+    <ProgressBar
+        android:id="@+id/fetch_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:max="1000"
+        android:progress="0"
+        android:progressBackgroundTint="#10000000"
+        android:progressTint="#40000000" />
 
     <LinearLayout
-        android:id="@+id/widget_container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="8dp">
 
-    <LinearLayout
-        android:id="@+id/widget_controls"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="gone"
-        android:gravity="center"
-        android:paddingTop="4dp">
+        <LinearLayout
+            android:id="@+id/widget_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical" />
 
-        <TextView
-            android:id="@+id/btn_refresh"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/widget_controls"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:drawable/btn_default"
-            android:padding="8dp"
-            android:textSize="12sp"
-            android:text="Refresh"
-            android:textColor="@android:color/black" />
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:gravity="center"
+            android:paddingTop="4dp">
 
-        <TextView
-            android:id="@+id/btn_setup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:drawable/btn_default"
-            android:padding="8dp"
-            android:textSize="12sp"
-            android:text="Setup"
-            android:layout_marginStart="8dp"
-            android:textColor="@android:color/black" />
+            <TextView
+                android:id="@+id/btn_refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/btn_default"
+                android:padding="8dp"
+                android:textSize="12sp"
+                android:text="Refresh"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/btn_setup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/btn_default"
+                android:padding="8dp"
+                android:textSize="12sp"
+                android:text="Setup"
+                android:layout_marginStart="8dp"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>
