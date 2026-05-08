@@ -61,6 +61,13 @@ class WidgetConfigActivity : AppCompatActivity() {
                 WidgetSettings.saveUrl(this, appWidgetId, url)
                 WidgetSettings.saveBgSettings(this, appWidgetId, color, alpha)
 
+                // Also add to the global config library if it's a new URL
+                val configs = ConfigManager.getConfigs(this)
+                if (configs.none { it.url == url }) {
+                    configs.add(WidgetConfig("Widget $appWidgetId", url))
+                    ConfigManager.saveConfigs(this, configs)
+                }
+
                 // Update the widget immediately
                 val appWidgetManager = AppWidgetManager.getInstance(this)
                 val serviceIntent = Intent(this, UpdateService::class.java).apply {

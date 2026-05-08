@@ -15,16 +15,12 @@ import java.net.URL
 import kotlin.concurrent.thread
 import org.json.JSONObject
 
-data class WidgetConfig(var name: String, var url: String)
-
 class ConfigListFragment : Fragment() {
 
     private var _binding: FragmentConfigListBinding? = null
     private val binding get() = _binding!!
 
-    private val configs = mutableListOf(
-        WidgetConfig("Countdown 2030 (GitHub)", AppConfig.DEFAULT_JSON_URL)
-    )
+    private var configs = mutableListOf<WidgetConfig>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,13 +30,16 @@ class ConfigListFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onResume() {
+        super.onResume()
+        ConfigManager.syncWithActiveWidgets(requireContext())
+        configs = ConfigManager.getConfigs(requireContext())
         refreshList()
     }
 
     fun addConfig(name: String, url: String) {
         configs.add(WidgetConfig(name, url))
+        ConfigManager.saveConfigs(requireContext(), configs)
         refreshList()
     }
 
@@ -102,6 +101,7 @@ class ConfigListFragment : Fragment() {
             .setPositiveButton("Save") { _, _ ->
                 config.name = inputName.text.toString()
                 config.url = inputUrl.text.toString()
+                ConfigManager.saveConfigs(requireContext(), configs)
                 refreshList()
             }
             .setNegativeButton("Cancel", null)
