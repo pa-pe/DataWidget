@@ -196,6 +196,16 @@ class UpdateService : Service() {
 
                 for (j in 0 until colsArray.length()) {
                     val colJson = colsArray.getJSONObject(j)
+                    val type = colJson.optString("type")
+                    
+                    if (type == "v-separator") {
+                        val sepView = RemoteViews(context.packageName, R.layout.widget_v_separator)
+                        val sepColor = colJson.optString("color", "#CCCCCC")
+                        sepView.setInt(R.id.separator_line, "setBackgroundColor", ColorUtils.parseColor(sepColor))
+                        rowView.addView(R.id.row_container, sepView)
+                        continue
+                    }
+
                     val weight = colJson.optString("weight", "12")
                     val cellLayout = when (weight) {
                         "6" -> R.layout.widget_col_6
