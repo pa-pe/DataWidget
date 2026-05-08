@@ -1,8 +1,6 @@
 {
   "update_interval_sec": 3600,
   "next_update_at": 1893456000,
-  "bg_color": "#000000",
-  "bg_alpha": 0.5,
   "rows": [
     {
       "cols": [
