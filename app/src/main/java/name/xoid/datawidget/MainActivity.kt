@@ -15,6 +15,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.content.Intent
 import name.xoid.datawidget.databinding.ActivityMainBinding
+import name.xoid.datawidget.databinding.LayoutConfigEditBinding
 
 class MainActivity : AppCompatActivity() {
 
@@ -42,26 +43,39 @@ class MainActivity : AppCompatActivity() {
         startForegroundService(serviceIntent)
 
         binding.fab.setOnClickListener { view ->
-            val inputName = android.widget.EditText(this).apply { hint = "Name" }
-            val inputUrl = android.widget.EditText(this).apply { hint = "URL" }
-            val layout = android.widget.LinearLayout(this).apply {
-                orientation = android.widget.LinearLayout.VERTICAL
-                addView(inputName)
-                addView(inputUrl)
-                setPadding(50, 40, 50, 10)
-            }
+            val editBinding = LayoutConfigEditBinding.inflate(layoutInflater)
+            val helper = ConfigUiHelper(this, layoutInflater, editBinding)
+            
+            // Default values for a new config
+            val newConfig = WidgetConfig("New Config", "")
+            helper.setup(newConfig)
+            
+            editBinding.txtTitle.text = "Add New Configuration"
+            editBinding.btnSave.visibility = android.view.View.GONE
 
             androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Add New Configuration")
-                .setView(layout)
+                .setTitle("New Configuration")
+                .setView(editBinding.root)
                 .setPositiveButton("Add") { _, _ ->
-                    val name = inputName.text.toString()
-                    val url = inputUrl.text.toString()
-                    if (name.isNotEmpty() && url.isNotEmpty()) {
+                    val name = editBinding.editName.text.toString()
+                    val url = editBinding.editUrl.text.toString()
+                    if (url.isNotEmpty()) {
+                        val finalName = if (name.isEmpty()) "Unnamed" else name
+                        val config = WidgetConfig(
+                            finalName, 
+                            url, 
+                            String.format("#%06X", (0xFFFFFF and helper.selectedColor)),
+                            helper.selectedAlpha,
+                            editBinding.checkScreenOn.isChecked,
+                            if (editBinding.radioOnTap.isChecked) "on_tap" else "always",
+                            if (editBinding.radioPost.isChecked) "POST" else "GET",
+                            helper.selectedFontSize
+                        )
+                        
                         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main) as NavHostFragment
                         val currentFragment = navHostFragment.childFragmentManager.fragments.firstOrNull()
                         if (currentFragment is ConfigListFragment) {
-                            currentFragment.addConfig(name, url)
+                            currentFragment.addConfig(config)
                         }
                     }
                 }

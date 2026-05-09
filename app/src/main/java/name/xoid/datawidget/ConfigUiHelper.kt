@@ -23,6 +23,7 @@ class ConfigUiHelper(
     var selectedFontSize: Int = 12
 
     fun setup(config: WidgetConfig) {
+        binding.editName.setText(config.name)
         binding.editUrl.setText(config.url)
         selectedColor = ColorUtils.parseColor(config.bgColor)
         selectedAlpha = config.bgAlpha
@@ -102,11 +103,28 @@ class ConfigUiHelper(
         val names = examples.map { it.name }.toTypedArray()
 
         androidx.appcompat.app.AlertDialog.Builder(context)
-            .setTitle("Select Example")
+            .setTitle("Select Example Template")
             .setItems(names) { _, which ->
                 val selected = examples[which]
+                binding.editName.setText(selected.name)
                 binding.editUrl.setText(selected.url)
-                // We no longer overwrite the user's color/alpha settings here
+                
+                // Reset visual settings to template defaults (which are now default WidgetConfig values)
+                binding.editBgColor.setText(selected.bgColor)
+                selectedColor = ColorUtils.parseColor(selected.bgColor)
+                updateColorPreview(selectedColor)
+                
+                selectedAlpha = selected.bgAlpha
+                binding.seekAlpha.progress = (selectedAlpha * 100).toInt()
+                binding.txtAlphaPercent.text = "${binding.seekAlpha.progress}%"
+                
+                selectedFontSize = selected.baseFontSize
+                binding.seekFontSize.progress = selectedFontSize
+                binding.txtFontSize.text = "${selectedFontSize}sp"
+                
+                if (selected.requestType == "POST") binding.radioPost.isChecked = true else binding.radioGet.isChecked = true
+                binding.checkScreenOn.isChecked = selected.updateOnlyScreenOn
+                if (selected.progressVisibility == "on_tap") binding.radioOnTap.isChecked = true else binding.radioAlways.isChecked = true
             }
             .setNegativeButton("Cancel", null)
             .show()

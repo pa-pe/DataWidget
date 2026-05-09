@@ -41,8 +41,8 @@ class ConfigListFragment : Fragment() {
         refreshList()
     }
 
-    fun addConfig(name: String, url: String) {
-        configs.add(WidgetConfig(name, url))
+    fun addConfig(config: WidgetConfig) {
+        configs.add(config)
         ConfigManager.saveConfigs(requireContext(), configs)
         refreshList()
     }
@@ -115,6 +115,7 @@ class ConfigListFragment : Fragment() {
             .setView(editBinding.root)
             .setPositiveButton("Save") { _, _ ->
                 try {
+                    config.name = editBinding.editName.text.toString()
                     config.url = editBinding.editUrl.text.toString()
                     config.bgColor = String.format("#%06X", (0xFFFFFF and helper.selectedColor))
                     config.bgAlpha = helper.selectedAlpha
