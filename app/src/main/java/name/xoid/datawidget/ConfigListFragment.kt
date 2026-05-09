@@ -15,6 +15,8 @@ import java.net.URL
 import kotlin.concurrent.thread
 import org.json.JSONObject
 
+import name.xoid.datawidget.databinding.LayoutConfigEditBinding
+
 class ConfigListFragment : Fragment() {
 
     private var _binding: FragmentConfigListBinding? = null
@@ -80,70 +82,25 @@ class ConfigListFragment : Fragment() {
     }
 
     private fun showEditDialog(config: WidgetConfig) {
-        val inputName = android.widget.EditText(context).apply { 
-            hint = "Name" 
-            setText(config.name)
-        }
-        val inputUrl = android.widget.EditText(context).apply { 
-            hint = "URL" 
-            setText(config.url)
-        }
-        val inputBgColor = android.widget.EditText(context).apply { 
-            hint = "BG Color (HEX)" 
-            setText(config.bgColor)
-        }
-        val inputBgAlpha = android.widget.EditText(context).apply { 
-            hint = "Transparency (0.0 - 1.0)" 
-            setText(config.bgAlpha.toString())
-            inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
-        }
-        val inputScreenOn = android.widget.CheckBox(context).apply {
-            text = "Update only when screen is on"
-            isChecked = config.updateOnlyScreenOn
-        }
-        val inputProgressVis = android.widget.RadioGroup(context).apply {
-            orientation = android.widget.LinearLayout.VERTICAL
-            val rbAlways = android.widget.RadioButton(context).apply { 
-                id = View.generateViewId()
-                text = "Always Show Progress" 
-            }
-            val rbOnTap = android.widget.RadioButton(context).apply { 
-                id = View.generateViewId()
-                text = "Show Progress on Tap" 
-            }
-            addView(rbAlways)
-            addView(rbOnTap)
-            if (config.progressVisibility == "on_tap") rbOnTap.isChecked = true else rbAlways.isChecked = true
-        }
+        val editBinding = LayoutConfigEditBinding.inflate(layoutInflater)
+        val helper = ConfigUiHelper(requireContext(), layoutInflater, editBinding)
+        helper.setup(config)
 
-        val layout = android.widget.LinearLayout(context).apply {
-            orientation = android.widget.LinearLayout.VERTICAL
-            addView(inputName)
-            addView(inputUrl)
-            addView(inputBgColor)
-            addView(inputBgAlpha)
-            addView(inputScreenOn)
-            addView(android.widget.TextView(context).apply { text = "Progress Bar Visibility"; setPadding(0, 10, 0, 0) })
-            addView(inputProgressVis)
-            setPadding(50, 40, 50, 10)
-        }
+        // Hide the internal "Save" button because we'll use the Dialog's button
+        editBinding.btnSave.visibility = View.GONE
 
-        AlertDialog.Builder(requireContext())
+        val dialog = AlertDialog.Builder(requireContext())
             .setTitle("Edit Configuration")
-            .setView(layout)
+            .setView(editBinding.root)
             .setPositiveButton("Save") { _, _ ->
                 try {
-                    config.name = inputName.text.toString()
-                    config.url = inputUrl.text.toString()
-                    config.bgColor = inputBgColor.text.toString()
-                    config.bgAlpha = inputBgAlpha.text.toString().toFloat().coerceIn(0f, 1f)
-                    config.updateOnlyScreenOn = inputScreenOn.isChecked
+                    config.url = editBinding.editUrl.text.toString()
+                    config.bgColor = String.format("#%06X", (0xFFFFFF and helper.selectedColor))
+                    config.bgAlpha = helper.selectedAlpha
+                    config.updateOnlyScreenOn = editBinding.checkScreenOn.isChecked
                     
-                    val selectedId = inputProgressVis.checkedRadioButtonId
-                    config.progressVisibility = if (selectedId != -1) {
-                        val rb = inputProgressVis.findViewById<android.widget.RadioButton>(selectedId)
-                        if (rb.text.toString().contains("Tap")) "on_tap" else "always"
-                    } else "always"
+                    val progVis = if (editBinding.radioOnTap.isChecked) "on_tap" else "always"
+                    config.progressVisibility = progVis
                     
                     ConfigManager.saveConfigs(requireContext(), configs)
                     refreshList()
@@ -152,7 +109,9 @@ class ConfigListFragment : Fragment() {
                 }
             }
             .setNegativeButton("Cancel", null)
-            .show()
+            .create()
+        
+        dialog.show()
     }
 
     private fun runTest(config: WidgetConfig) {
