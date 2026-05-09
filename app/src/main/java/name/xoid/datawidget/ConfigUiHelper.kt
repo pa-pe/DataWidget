@@ -50,6 +50,10 @@ class ConfigUiHelper(
             binding.radioAlways.isChecked = true
         }
 
+        binding.btnExamples.setOnClickListener {
+            showExamplesPicker()
+        }
+
         binding.seekAlpha.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 selectedAlpha = progress / 100f
@@ -91,6 +95,21 @@ class ConfigUiHelper(
 
     private fun updateColorPreview(color: Int) {
         binding.viewColorPreview.setBackgroundColor(color)
+    }
+
+    private fun showExamplesPicker() {
+        val examples = ExampleProvider.EXAMPLES
+        val names = examples.map { it.name }.toTypedArray()
+
+        androidx.appcompat.app.AlertDialog.Builder(context)
+            .setTitle("Select Example")
+            .setItems(names) { _, which ->
+                val selected = examples[which]
+                binding.editUrl.setText(selected.url)
+                // We no longer overwrite the user's color/alpha settings here
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun showColorPicker(onColorSelected: (Int) -> Unit) {

@@ -27,13 +27,31 @@
             android:text="Data URL"
             android:textStyle="bold"
             android:textSize="14sp" />
-        <EditText
-            android:id="@+id/edit_url"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="https://example.com/data.json"
-            android:inputType="textUri"
-            android:layout_marginBottom="16dp" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <EditText
+                android:id="@+id/edit_url"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="https://example.com/data.json"
+                android:inputType="textUri" />
+            <Button
+                android:id="@+id/btn_examples"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Examples"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
 
         <TextView
             android:layout_width="match_parent"
