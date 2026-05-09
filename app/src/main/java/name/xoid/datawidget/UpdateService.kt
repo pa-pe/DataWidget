@@ -88,6 +88,36 @@ class UpdateService : Service() {
                     Toast.makeText(this, "Refreshing...", Toast.LENGTH_SHORT).show()
                 }
             }
+            ACTION_FONT_SIZE_INC, ACTION_FONT_SIZE_DEC -> {
+                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                    val currentSize = WidgetSettings.getFontSize(this, appWidgetId)
+                    val newSize = if (intent.action == ACTION_FONT_SIZE_INC) {
+                        (currentSize + 1).coerceAtMost(30)
+                    } else {
+                        (currentSize - 1).coerceAtLeast(6)
+                    }
+                    
+                    val color = WidgetSettings.getBgColor(this, appWidgetId)
+                    val alpha = WidgetSettings.getBgAlpha(this, appWidgetId)
+                    val screenOnOnly = WidgetSettings.getScreenOnOnly(this, appWidgetId)
+                    val progVis = WidgetSettings.getProgressVisibility(this, appWidgetId)
+                    val reqType = WidgetSettings.getRequestType(this, appWidgetId)
+                    
+                    WidgetSettings.saveSettings(this, appWidgetId, color, alpha, screenOnOnly, progVis, reqType, newSize)
+                    
+                    // Sync with library
+                    val url = WidgetSettings.getUrl(this, appWidgetId)
+                    if (url != null) {
+                        val configs = ConfigManager.getConfigs(this)
+                        configs.find { it.url == url }?.let {
+                            it.baseFontSize = newSize
+                            ConfigManager.saveConfigs(this, configs)
+                        }
+                    }
+
+                    updateWidget(this, AppWidgetManager.getInstance(this), appWidgetId)
+                }
+            }
             ACTION_REMOVE_WIDGETS -> {
                 val ids = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS)
                 ids?.let {
@@ -379,6 +409,25 @@ class UpdateService : Service() {
         )
         root.setOnClickPendingIntent(R.id.btn_setup, setupPendingIntent)
 
+        // Setup font size controls
+        val decIntent = Intent(context, UpdateService::class.java).apply {
+            action = ACTION_FONT_SIZE_DEC
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+        }
+        root.setOnClickPendingIntent(R.id.btn_font_dec, android.app.PendingIntent.getService(
+            context, appWidgetId + 30000, decIntent,
+            android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
+        ))
+
+        val incIntent = Intent(context, UpdateService::class.java).apply {
+            action = ACTION_FONT_SIZE_INC
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+        }
+        root.setOnClickPendingIntent(R.id.btn_font_inc, android.app.PendingIntent.getService(
+            context, appWidgetId + 40000, incIntent,
+            android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
+        ))
+
         // Control visibility
         val isVisible = controlsVisible[appWidgetId] ?: false
         root.setViewVisibility(R.id.widget_controls, if (isVisible) View.VISIBLE else View.GONE)
@@ -425,6 +474,8 @@ class UpdateService : Service() {
         const val ACTION_REMOVE_WIDGETS = "name.xoid.datawidget.ACTION_REMOVE_WIDGETS"
         const val ACTION_TOGGLE_CONTROLS = "name.xoid.datawidget.ACTION_TOGGLE_CONTROLS"
         const val ACTION_FORCE_REFRESH = "name.xoid.datawidget.ACTION_FORCE_REFRESH"
+        const val ACTION_FONT_SIZE_INC = "name.xoid.datawidget.ACTION_FONT_SIZE_INC"
+        const val ACTION_FONT_SIZE_DEC = "name.xoid.datawidget.ACTION_FONT_SIZE_DEC"
         const val NOTIFICATION_ID = 1
         const val CHANNEL_ID = "update_service_channel"
     }
