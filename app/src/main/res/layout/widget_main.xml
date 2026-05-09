@@ -39,23 +39,31 @@
             android:paddingTop="4dp">
 
             <TextView
-                android:id="@+id/btn_refresh"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:drawable/btn_default"
-                android:padding="8dp"
-                android:textSize="12sp"
-                android:text="Refresh"
-                android:textColor="@android:color/black" />
-
-            <TextView
                 android:id="@+id/btn_setup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@android:drawable/btn_default"
-                android:padding="8dp"
+                android:background="@drawable/widget_button_background"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
                 android:textSize="12sp"
                 android:text="Setup"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/btn_refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/widget_button_background"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:textSize="12sp"
+                android:text="Refresh"
                 android:layout_marginStart="8dp"
                 android:textColor="@android:color/black" />
         </LinearLayout>
