@@ -1,7 +1,6 @@
 package name.xoid.datawidget
 
 import android.appwidget.AppWidgetManager
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -47,8 +46,6 @@ class WidgetConfigActivity : AppCompatActivity() {
 
         // Check if we have data from PendingPinConfig (Bridge)
         val pending = PendingPinConfig.config
-        var linkedConfigId = WidgetSettings.getConfigId(this, appWidgetId)
-
         if (pending != null) {
             currentUrl = pending.url
             currentName = pending.name
@@ -58,7 +55,6 @@ class WidgetConfigActivity : AppCompatActivity() {
             currentProgVis = pending.progressVisibility
             currentReqType = pending.requestType
             currentFontSize = pending.baseFontSize
-            linkedConfigId = pending.id // Store the link!
         }
 
         val tempConfig = WidgetConfig(currentName, currentUrl, String.format("#%06X", (0xFFFFFF and currentColor)), currentAlpha, currentScreenOn, currentProgVis, currentReqType, currentFontSize)
@@ -72,6 +68,7 @@ class WidgetConfigActivity : AppCompatActivity() {
 
             val name = binding.editName.text.toString().trim()
             val url = binding.editUrl.text.toString().trim()
+            val colorStr = String.format("#%06X", (0xFFFFFF and helper.selectedColor))
             val alpha = helper.selectedAlpha
             val screenOnOnly = binding.checkScreenOn.isChecked
             val progVis = if (binding.radioOnTap.isChecked) "on_tap" else "always"
@@ -79,25 +76,44 @@ class WidgetConfigActivity : AppCompatActivity() {
             val fontSize = helper.selectedFontSize
 
             try {
+                // 1. Save local settings for the widget ID (as a safe backup)
                 WidgetSettings.saveUrl(this, appWidgetId, url)
                 WidgetSettings.saveName(this, appWidgetId, name)
                 WidgetSettings.saveSettings(this, appWidgetId, helper.selectedColor, alpha, screenOnOnly, progVis, requestType, fontSize)
                 
-                // Establish or break the link based on URL
-                val library = ConfigManager.getConfigs(this)
-                val matching = library.find { it.url == url }
-                if (matching != null) {
-                    WidgetSettings.saveConfigId(this, appWidgetId, matching.id)
+                // 2. Sync with Library (Master Copy)
+                val configs = ConfigManager.getConfigs(this)
+                val configId = WidgetSettings.getConfigId(this, appWidgetId)
+                
+                // Try to find if this widget is already linked to a library item
+                val existing = if (configId != null) configs.find { it.id == configId } else null
+                
+                if (existing != null) {
+                    // Update the existing library template
+                    existing.name = name
+                    existing.url = url
+                    existing.bgColor = colorStr
+                    existing.bgAlpha = alpha
+                    existing.updateOnlyScreenOn = screenOnOnly
+                    existing.progressVisibility = progVis
+                    existing.requestType = requestType
+                    existing.baseFontSize = fontSize
                 } else {
-                    val prefs = getSharedPreferences("WidgetSettings", Context.MODE_PRIVATE)
-                    prefs.edit().remove("config_id_$appWidgetId").apply()
+                    // Create a NEW library template for this new widget
+                    val newConfig = WidgetConfig(name, url, colorStr, alpha, screenOnOnly, progVis, requestType, fontSize)
+                    configs.add(newConfig)
+                    // Establish the permanent link
+                    WidgetSettings.saveConfigId(this, appWidgetId, newConfig.id)
                 }
+                
+                // Save the library
+                ConfigManager.saveConfigs(this, configs)
 
                 // Clear the bridge only on successful save
                 PendingPinConfig.config = null
 
                 // Update the widget immediately
-                AppWidgetManager.getInstance(this)
+                val appWidgetManager = AppWidgetManager.getInstance(this)
                 val serviceIntent = Intent(this, UpdateService::class.java).apply {
                     action = UpdateService.ACTION_UPDATE_WIDGETS
                     putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
@@ -108,7 +124,7 @@ class WidgetConfigActivity : AppCompatActivity() {
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                 setResult(RESULT_OK, resultValue)
                 finish()
-            } catch (_: Exception) {
+            } catch (e: Exception) {
                 Toast.makeText(this, "Error saving settings", Toast.LENGTH_SHORT).show()
             }
         }
