@@ -6,19 +6,19 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import name.xoid.datawidget.databinding.LayoutConfigEditBinding
+import name.xoid.datawidget.databinding.LayoutConfigFormBinding
 
 class WidgetConfigActivity : AppCompatActivity() {
 
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
-    private lateinit var binding: LayoutConfigEditBinding
+    private lateinit var binding: LayoutConfigFormBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setResult(RESULT_CANCELED)
 
-        binding = LayoutConfigEditBinding.inflate(layoutInflater)
+        binding = LayoutConfigFormBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val intent = intent
@@ -40,25 +40,25 @@ class WidgetConfigActivity : AppCompatActivity() {
         val currentAlpha = WidgetSettings.getBgAlpha(this, appWidgetId)
         val currentScreenOn = WidgetSettings.getScreenOnOnly(this, appWidgetId)
         val currentProgVis = WidgetSettings.getProgressVisibility(this, appWidgetId)
+        val currentReqType = WidgetSettings.getRequestType(this, appWidgetId)
+        val currentFontSize = WidgetSettings.getFontSize(this, appWidgetId)
 
-        val tempConfig = WidgetConfig("temp", currentUrl, String.format("#%06X", (0xFFFFFF and currentColor)), currentAlpha, currentScreenOn, currentProgVis)
+        val tempConfig = WidgetConfig("Widget $appWidgetId", currentUrl, String.format("#%06X", (0xFFFFFF and currentColor)), currentAlpha, currentScreenOn, currentProgVis, currentReqType, currentFontSize)
         
         val helper = ConfigUiHelper(this, layoutInflater, binding)
         helper.setup(tempConfig)
 
         binding.btnSave.setOnClickListener {
-            val url = binding.editUrl.text.toString()
+            if (!helper.isValid()) return@setOnClickListener
+
+            val name = binding.editName.text.toString().trim()
+            val url = binding.editUrl.text.toString().trim()
             val colorStr = String.format("#%06X", (0xFFFFFF and helper.selectedColor))
             val alpha = helper.selectedAlpha
             val screenOnOnly = binding.checkScreenOn.isChecked
             val progVis = if (binding.radioOnTap.isChecked) "on_tap" else "always"
             val requestType = if (binding.radioPost.isChecked) "POST" else "GET"
             val fontSize = helper.selectedFontSize
-
-            if (url.isEmpty()) {
-                Toast.makeText(this, "URL cannot be empty", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
 
             try {
                 WidgetSettings.saveUrl(this, appWidgetId, url)
@@ -68,6 +68,7 @@ class WidgetConfigActivity : AppCompatActivity() {
                 val configs = ConfigManager.getConfigs(this)
                 val existing = configs.find { it.url == url }
                 if (existing != null) {
+                    existing.name = name
                     existing.bgColor = colorStr
                     existing.bgAlpha = alpha
                     existing.updateOnlyScreenOn = screenOnOnly
@@ -75,7 +76,7 @@ class WidgetConfigActivity : AppCompatActivity() {
                     existing.requestType = requestType
                     existing.baseFontSize = fontSize
                 } else {
-                    configs.add(WidgetConfig("Widget $appWidgetId", url, colorStr, alpha, screenOnOnly, progVis, requestType, fontSize))
+                    configs.add(WidgetConfig(name, url, colorStr, alpha, screenOnOnly, progVis, requestType, fontSize))
                 }
                 ConfigManager.saveConfigs(this, configs)
 

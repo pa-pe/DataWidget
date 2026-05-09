@@ -16,8 +16,7 @@ import kotlin.concurrent.thread
 import org.json.JSONObject
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
-
-import name.xoid.datawidget.databinding.LayoutConfigEditBinding
+import name.xoid.datawidget.databinding.LayoutConfigFormBinding
 
 class ConfigListFragment : Fragment() {
 
@@ -103,20 +102,26 @@ class ConfigListFragment : Fragment() {
     }
 
     private fun showEditDialog(config: WidgetConfig) {
-        val editBinding = LayoutConfigEditBinding.inflate(layoutInflater)
+        val editBinding = LayoutConfigFormBinding.inflate(layoutInflater)
         val helper = ConfigUiHelper(requireContext(), layoutInflater, editBinding)
         helper.setup(config)
 
-        // Hide the internal "Save" button because we'll use the Dialog's button
+        editBinding.txtTitle.text = "Edit Configuration"
         editBinding.btnSave.visibility = View.GONE
 
         val dialog = AlertDialog.Builder(requireContext())
             .setTitle("Edit Configuration")
             .setView(editBinding.root)
-            .setPositiveButton("Save") { _, _ ->
-                try {
-                    config.name = editBinding.editName.text.toString()
-                    config.url = editBinding.editUrl.text.toString()
+            .setPositiveButton("Save", null) // Set to null to handle manually for validation
+            .setNegativeButton("Cancel", null)
+            .create()
+        
+        dialog.setOnShowListener {
+            val saveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            saveButton.setOnClickListener {
+                if (helper.isValid()) {
+                    config.name = editBinding.editName.text.toString().trim()
+                    config.url = editBinding.editUrl.text.toString().trim()
                     config.bgColor = String.format("#%06X", (0xFFFFFF and helper.selectedColor))
                     config.bgAlpha = helper.selectedAlpha
                     config.updateOnlyScreenOn = editBinding.checkScreenOn.isChecked
@@ -129,12 +134,10 @@ class ConfigListFragment : Fragment() {
                     
                     ConfigManager.saveConfigs(requireContext(), configs)
                     refreshList()
-                } catch (e: Exception) {
-                    Toast.makeText(context, "Invalid data", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
                 }
             }
-            .setNegativeButton("Cancel", null)
-            .create()
+        }
         
         dialog.show()
     }
@@ -154,6 +157,7 @@ class ConfigListFragment : Fragment() {
             val content = try {
                 val url = URL(config.url)
                 val connection = url.openConnection() as HttpURLConnection
+                connection.requestMethod = config.requestType
                 connection.connectTimeout = 5000
                 connection.readTimeout = 5000
                 val text = connection.inputStream.bufferedReader().use { it.readText() }
@@ -174,22 +178,12 @@ class ConfigListFragment : Fragment() {
                     val errors = mutableListOf<String>()
                     
                     if (!json.has("update_interval_sec") && !json.has("next_update_at")) {
-                        errors.add("- Missing update parameters (update_interval_sec or next_update_at)")
+                        errors.add("- Missing update parameters")
                     }
                     
                     val rows = json.optJSONArray("rows")
                     if (rows == null || rows.length() == 0) {
                         errors.add("- No rows found")
-                    } else {
-                        var hasCol = false
-                        for (i in 0 until rows.length()) {
-                            val cols = rows.getJSONObject(i).optJSONArray("cols")
-                            if (cols != null && cols.length() > 0) {
-                                hasCol = true
-                                break
-                            }
-                        }
-                        if (!hasCol) errors.add("- No columns found in any row")
                     }
                     
                     if (errors.isEmpty()) {
@@ -221,12 +215,6 @@ class ConfigListFragment : Fragment() {
         val componentName = ComponentName(requireContext(), DataWidgetProvider::class.java)
 
         if (appWidgetManager.isRequestPinAppWidgetSupported) {
-            // We can't set the URL before the widget ID exists, 
-            // but we can pass it to a callback receiver or just let the user 
-            // click Save in the config activity that will open.
-            
-            // For now, we just start the pinning process. 
-            // On most devices, the system will then launch our Configuration Activity.
             appWidgetManager.requestPinAppWidget(componentName, null, null)
         } else {
             Toast.makeText(requireContext(), "Your launcher does not support direct pinning", Toast.LENGTH_SHORT).show()

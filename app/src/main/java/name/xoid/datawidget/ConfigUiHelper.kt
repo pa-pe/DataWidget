@@ -7,16 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.GridView
 import android.widget.SeekBar
 import androidx.core.widget.doAfterTextChanged
-import name.xoid.datawidget.databinding.LayoutConfigEditBinding
+import android.util.Patterns
+import name.xoid.datawidget.databinding.LayoutConfigFormBinding
 import name.xoid.datawidget.databinding.DialogColorPickerBinding
 
 class ConfigUiHelper(
     private val context: Context,
     private val layoutInflater: LayoutInflater,
-    private val binding: LayoutConfigEditBinding
+    private val binding: LayoutConfigFormBinding
 ) {
     var selectedColor: Int = Color.WHITE
     var selectedAlpha: Float = 1.0f
@@ -87,11 +87,32 @@ class ConfigUiHelper(
             val colorStr = s.toString()
             if (colorStr.isNotEmpty()) {
                 val color = ColorUtils.parseColor(colorStr)
-                // Only update preview if it looks like a valid color or we are just typing
                 selectedColor = color
                 binding.viewColorPreview.setBackgroundColor(color)
             }
         }
+    }
+
+    fun isValid(): Boolean {
+        val name = binding.editName.text.toString().trim()
+        val url = binding.editUrl.text.toString().trim()
+        
+        var valid = true
+        
+        if (name.isEmpty()) {
+            binding.editName.error = "Name is required"
+            valid = false
+        }
+        
+        if (url.isEmpty()) {
+            binding.editUrl.error = "URL is required"
+            valid = false
+        } else if (!Patterns.WEB_URL.matcher(url).matches()) {
+            binding.editUrl.error = "Invalid URL format"
+            valid = false
+        }
+        
+        return valid
     }
 
     private fun updateColorPreview(color: Int) {
@@ -99,17 +120,16 @@ class ConfigUiHelper(
     }
 
     private fun showExamplesPicker() {
-        val examples = ExampleProvider.EXAMPLES
-        val names = examples.map { it.name }.toTypedArray()
+        val allConfigs = ExampleProvider.EXAMPLES
+        val names = allConfigs.map { it.name }.toTypedArray()
 
         androidx.appcompat.app.AlertDialog.Builder(context)
             .setTitle("Select Example Template")
             .setItems(names) { _, which ->
-                val selected = examples[which]
+                val selected = allConfigs[which]
                 binding.editName.setText(selected.name)
                 binding.editUrl.setText(selected.url)
                 
-                // Reset visual settings to template defaults (which are now default WidgetConfig values)
                 binding.editBgColor.setText(selected.bgColor)
                 selectedColor = ColorUtils.parseColor(selected.bgColor)
                 updateColorPreview(selectedColor)
@@ -125,6 +145,10 @@ class ConfigUiHelper(
                 if (selected.requestType == "POST") binding.radioPost.isChecked = true else binding.radioGet.isChecked = true
                 binding.checkScreenOn.isChecked = selected.updateOnlyScreenOn
                 if (selected.progressVisibility == "on_tap") binding.radioOnTap.isChecked = true else binding.radioAlways.isChecked = true
+                
+                // Clear any error messages when an example is picked
+                binding.editName.error = null
+                binding.editUrl.error = null
             }
             .setNegativeButton("Cancel", null)
             .show()
