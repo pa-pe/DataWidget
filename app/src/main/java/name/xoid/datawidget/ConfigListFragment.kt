@@ -139,17 +139,17 @@ class ConfigListFragment : Fragment() {
         val helper = ConfigUiHelper(requireContext(), layoutInflater, editBinding)
         helper.setup(config)
 
-        // Hide the internal title and save button because we'll use the Dialog's UI
-        editBinding.txtTitle.visibility = View.GONE
+        // Use internal title
+        editBinding.txtTitle.visibility = View.VISIBLE
+        editBinding.txtTitle.text = "Edit Configuration"
         editBinding.btnSave.visibility = View.GONE
 
         val dialog = AlertDialog.Builder(requireContext())
-            .setTitle("Edit Configuration")
             .setView(editBinding.root)
-            .setPositiveButton("Save", null) // Set to null to handle manually for validation
+            .setPositiveButton("Save", null)
             .setNegativeButton("Cancel", null)
             .create()
-        
+
         dialog.setOnShowListener {
             val saveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             saveButton.setOnClickListener {
