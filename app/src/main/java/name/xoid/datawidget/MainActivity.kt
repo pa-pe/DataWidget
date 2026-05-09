@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
             val newConfig = WidgetConfig("New Config", "")
             helper.setup(newConfig)
             
-            editBinding.txtTitle.text = "Add New Configuration"
+            editBinding.txtTitle.visibility = android.view.View.GONE
             editBinding.btnSave.visibility = android.view.View.GONE
 
             val dialog = AlertDialog.Builder(this)
