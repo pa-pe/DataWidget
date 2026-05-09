@@ -174,6 +174,10 @@ class ConfigListFragment : Fragment() {
         }
         
         dialog.show()
+        
+        // Make the dialog wider (95% of screen width)
+        val width = (resources.displayMetrics.widthPixels * 0.95).toInt()
+        dialog.window?.setLayout(width, android.view.ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     private fun runTest(config: WidgetConfig) {

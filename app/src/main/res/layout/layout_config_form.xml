@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="16dp"
+            android:paddingHorizontal="8dp"
             android:paddingBottom="16dp"
             android:paddingTop="8dp">
 
@@ -52,28 +52,22 @@
                 android:textStyle="bold"
                 android:textSize="14sp" />
 
-            <LinearLayout
+            <EditText
+                android:id="@+id/edit_url"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:hint="https://example.com/data.json"
+                android:inputType="textMultiLine|textUri"
+                android:textSize="13sp" />
 
-                <EditText
-                    android:id="@+id/edit_url"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="https://example.com/data.json"
-                    android:inputType="textUri" />
-
-                <Button
-                    android:id="@+id/btn_examples"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Examples"
-                    android:layout_marginStart="8dp" />
-            </LinearLayout>
+            <Button
+                android:id="@+id/btn_examples"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select from Examples..."
+                android:layout_gravity="end"
+                android:layout_marginTop="-4dp" />
 
             <View
                 android:layout_width="match_parent"
