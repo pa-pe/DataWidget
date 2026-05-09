@@ -5,8 +5,6 @@ import androidx.core.graphics.toColorInt
 
 object ColorUtils {
     private val webColors = mapOf(
-        // The standard Android "green" is actually HTML "lime" (#00FF00).
-        // Here we map "green" to the darker HTML standard.
         "green" to "#008000",
         "lime" to "#00FF00",
         "yellowgreen" to "#9ACD32",
@@ -27,19 +25,26 @@ object ColorUtils {
 
     fun parseColor(colorStr: String?): Int {
         if (colorStr.isNullOrEmpty()) return Color.BLACK
-        val normalized = colorStr.lowercase().trim()
+        var normalized = colorStr.lowercase().trim()
         
+        // Handle short HEX codes like #444 -> #444444
+        if (normalized.startsWith("#") && normalized.length == 4) {
+            val r = normalized[1]
+            val g = normalized[2]
+            val b = normalized[3]
+            normalized = "#$r$r$g$g$b$b"
+        }
+
         // Check our custom map first
         val hex = webColors[normalized]
         if (hex != null) return hex.toColorInt()
 
         return try {
-            // If it's a hex string (starts with #), use toColorInt
             if (normalized.startsWith("#")) {
                 normalized.toColorInt()
             } else {
-                // Fallback to system parser for standard names like "red", "blue"
-                normalized.toColorInt()
+                // Fallback for standard system colors
+                Color.parseColor(normalized)
             }
         } catch (e: Exception) {
             Color.BLACK
