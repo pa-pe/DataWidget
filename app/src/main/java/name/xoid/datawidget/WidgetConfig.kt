@@ -1,14 +1,13 @@
 package name.xoid.datawidget
 
-import android.graphics.Color
-
 data class WidgetConfig(
     var name: String,
     var url: String,
     var bgColor: String = "#FFFFFF",
-    var bgAlpha: Float = 1.0f,
+    var bgAlpha: Float = AppConfig.DEFAULT_BG_ALPHA,
     var updateOnlyScreenOn: Boolean = true,
-    var progressVisibility: String = "always", // "always" or "on_tap"
-    var requestType: String = "GET", // "GET" or "POST"
-    var baseFontSize: Int = 12 // Default font size in sp
+    var progressVisibility: String = "always",
+    var requestType: String = "GET",
+    var baseFontSize: Int = 12,
+    var id: String = System.currentTimeMillis().toString() + (Math.random() * 1000).toInt()
 )

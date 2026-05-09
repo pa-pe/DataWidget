@@ -6,6 +6,8 @@ import android.graphics.Color
 object WidgetSettings {
     private const val PREFS_NAME = "WidgetSettings"
     private const val KEY_URL_PREFIX = "url_"
+    private const val KEY_CONFIG_ID_PREFIX = "config_id_"
+    private const val KEY_NAME_PREFIX = "name_"
     private const val KEY_BG_COLOR_PREFIX = "bg_color_"
     private const val KEY_BG_ALPHA_PREFIX = "bg_alpha_"
     private const val KEY_SCREEN_ON_ONLY_PREFIX = "screen_on_only_"
@@ -21,6 +23,26 @@ object WidgetSettings {
     fun getUrl(context: Context, appWidgetId: Int): String? {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         return prefs.getString(KEY_URL_PREFIX + appWidgetId, null)
+    }
+
+    fun saveName(context: Context, appWidgetId: Int, name: String) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit().putString(KEY_NAME_PREFIX + appWidgetId, name).apply()
+    }
+
+    fun getName(context: Context, appWidgetId: Int): String? {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return prefs.getString(KEY_NAME_PREFIX + appWidgetId, null)
+    }
+
+    fun saveConfigId(context: Context, appWidgetId: Int, configId: String) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit().putString(KEY_CONFIG_ID_PREFIX + appWidgetId, configId).apply()
+    }
+
+    fun getConfigId(context: Context, appWidgetId: Int): String? {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return prefs.getString(KEY_CONFIG_ID_PREFIX + appWidgetId, null)
     }
 
     fun saveSettings(
@@ -55,7 +77,7 @@ object WidgetSettings {
 
     fun getBgAlpha(context: Context, appWidgetId: Int): Float {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        return prefs.getFloat(KEY_BG_ALPHA_PREFIX + appWidgetId, 1.0f)
+        return prefs.getFloat(KEY_BG_ALPHA_PREFIX + appWidgetId, AppConfig.DEFAULT_BG_ALPHA)
     }
 
     fun getScreenOnOnly(context: Context, appWidgetId: Int): Boolean {
@@ -82,6 +104,8 @@ object WidgetSettings {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit()
             .remove(KEY_URL_PREFIX + appWidgetId)
+            .remove(KEY_NAME_PREFIX + appWidgetId)
+            .remove(KEY_CONFIG_ID_PREFIX + appWidgetId)
             .remove(KEY_BG_COLOR_PREFIX + appWidgetId)
             .remove(KEY_BG_ALPHA_PREFIX + appWidgetId)
             .remove(KEY_SCREEN_ON_ONLY_PREFIX + appWidgetId)

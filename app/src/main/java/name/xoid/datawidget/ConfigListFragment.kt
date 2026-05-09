@@ -14,6 +14,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.concurrent.thread
 import org.json.JSONObject
+import android.content.Intent
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import name.xoid.datawidget.databinding.LayoutConfigFormBinding
@@ -35,7 +36,6 @@ class ConfigListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        ConfigManager.syncWithActiveWidgets(requireContext())
         configs = ConfigManager.getConfigs(requireContext())
         refreshList()
     }
@@ -215,7 +215,20 @@ class ConfigListFragment : Fragment() {
         val componentName = ComponentName(requireContext(), DataWidgetProvider::class.java)
 
         if (appWidgetManager.isRequestPinAppWidgetSupported) {
-            appWidgetManager.requestPinAppWidget(componentName, null, null)
+            // 1. Save config to bridge
+            PendingPinConfig.config = config.copy()
+            
+            // 2. Create callback intent to our PinnedReceiver
+            val callbackIntent = Intent(requireContext(), PinnedReceiver::class.java)
+            val successCallback = android.app.PendingIntent.getBroadcast(
+                requireContext(), 
+                0, 
+                callbackIntent, 
+                android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_MUTABLE
+            )
+            
+            // 3. Request pin with callback
+            appWidgetManager.requestPinAppWidget(componentName, null, successCallback)
         } else {
             Toast.makeText(requireContext(), "Your launcher does not support direct pinning", Toast.LENGTH_SHORT).show()
         }

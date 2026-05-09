@@ -10,32 +10,12 @@ object ConfigManager {
     private const val PREFS_NAME = "Configs"
     private const val KEY_CONFIG_LIST = "config_list"
 
-    fun syncWithActiveWidgets(context: Context) {
-        val appWidgetManager = AppWidgetManager.getInstance(context)
-        val componentName = ComponentName(context, DataWidgetProvider::class.java)
-        val ids = appWidgetManager.getAppWidgetIds(componentName)
-        
-        val currentConfigs = getConfigs(context)
-        var changed = false
-
-        for (id in ids) {
-            val url = WidgetSettings.getUrl(context, id)
-            if (url != null && currentConfigs.none { it.url == url }) {
-                currentConfigs.add(WidgetConfig("Widget $id", url))
-                changed = true
-            }
-        }
-
-        if (changed) {
-            saveConfigs(context, currentConfigs)
-        }
-    }
-
     fun saveConfigs(context: Context, configs: List<WidgetConfig>) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val array = JSONArray()
         configs.forEach {
             val obj = JSONObject()
+            obj.put("id", it.id)
             obj.put("name", it.name)
             obj.put("url", it.url)
             obj.put("bg_color", it.bgColor)
@@ -69,11 +49,12 @@ object ConfigManager {
                     obj.getString("name"),
                     obj.getString("url"),
                     obj.optString("bg_color", "#FFFFFF"),
-                    obj.optDouble("bg_alpha", 1.0).toFloat(),
+                    obj.optDouble("bg_alpha", AppConfig.DEFAULT_BG_ALPHA.toDouble()).toFloat(),
                     obj.optBoolean("screen_on_only", true),
                     obj.optString("progress_visibility", "always"),
                     obj.optString("request_type", "GET"),
-                    obj.optInt("font_size", 12)
+                    obj.optInt("font_size", 12),
+                    obj.optString("id", System.currentTimeMillis().toString() + i)
                 ))
             }
         } catch (e: Exception) {

@@ -163,8 +163,11 @@ class UpdateService : Service() {
     }
 
     private fun fetchData(appWidgetId: Int) {
-        val urlString = WidgetSettings.getUrl(this, appWidgetId) ?: AppConfig.DEFAULT_JSON_URL
-        val requestType = WidgetSettings.getRequestType(this, appWidgetId)
+        val configId = WidgetSettings.getConfigId(this, appWidgetId)
+        val configFromLibrary = if (configId != null) ConfigManager.getConfigs(this).find { it.id == configId } else null
+        
+        val urlString = configFromLibrary?.url ?: (WidgetSettings.getUrl(this, appWidgetId) ?: AppConfig.DEFAULT_JSON_URL)
+        val requestType = configFromLibrary?.requestType ?: WidgetSettings.getRequestType(this, appWidgetId)
         
         thread {
             try {
@@ -239,12 +242,13 @@ class UpdateService : Service() {
                 ?: throw Exception("Waiting for data from GitHub...")
             val jsonObject = JSONObject(jsonString)
 
-            // Background color and transparency from WidgetSettings (User customization)
-            val userBgColor = WidgetSettings.getBgColor(context, appWidgetId)
-            val userBgAlpha = WidgetSettings.getBgAlpha(context, appWidgetId)
+            // Resolve linked config from library
+            val configId = WidgetSettings.getConfigId(context, appWidgetId)
+            val libraryConfig = if (configId != null) ConfigManager.getConfigs(context).find { it.id == configId } else null
 
-            // Fallback to JSON if user hasn't set anything? 
-            // For now, let's assume WidgetSettings always has a default (White, 1.0)
+            // Background color and transparency
+            val userBgColor = if (libraryConfig != null) ColorUtils.parseColor(libraryConfig.bgColor) else WidgetSettings.getBgColor(context, appWidgetId)
+            val userBgAlpha = libraryConfig?.bgAlpha ?: WidgetSettings.getBgAlpha(context, appWidgetId)
 
             val finalColor = Color.argb(
                 (userBgAlpha * 255).toInt().coerceIn(0, 255),
@@ -255,7 +259,7 @@ class UpdateService : Service() {
             root.setInt(R.id.widget_root, "setBackgroundColor", finalColor)
 
             // Update fetch progress bar visibility and value
-            val progVis = WidgetSettings.getProgressVisibility(context, appWidgetId)
+            val progVis = libraryConfig?.progressVisibility ?: WidgetSettings.getProgressVisibility(context, appWidgetId)
             val isControlsVisible = controlsVisible[appWidgetId] ?: false
             val shouldShowProgress = if (progVis == "on_tap") isControlsVisible else true
 
@@ -283,7 +287,7 @@ class UpdateService : Service() {
             }
 
             val rowsArray = jsonObject.getJSONArray("rows")
-            val baseFontSize = WidgetSettings.getFontSize(context, appWidgetId)
+            val baseFontSize = libraryConfig?.baseFontSize ?: WidgetSettings.getFontSize(context, appWidgetId)
 
             val currentTimeSeconds = System.currentTimeMillis() / 1000
 
