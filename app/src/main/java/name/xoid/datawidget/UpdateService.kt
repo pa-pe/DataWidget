@@ -258,12 +258,14 @@ class UpdateService : Service() {
                     }
 
                     val weight = colJson.optString("weight", "12")
-                    val cellLayout = when (weight) {
-                        "6" -> R.layout.widget_col_6
-                        "4" -> R.layout.widget_col_4
-                        else -> R.layout.widget_col_12
+                    val layoutName = "widget_col_$weight"
+                    val layoutId = context.resources.getIdentifier(layoutName, "layout", context.packageName)
+                    
+                    val cellView = if (layoutId != 0) {
+                        RemoteViews(context.packageName, layoutId)
+                    } else {
+                        RemoteViews(context.packageName, R.layout.widget_col_12)
                     }
-                    val cellView = RemoteViews(context.packageName, cellLayout)
 
                     if (colJson.optString("type") == "countdown") {
                         val target = colJson.getLong("target_timestamp")

@@ -3,8 +3,8 @@
     android:id="@+id/item_text"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
-    android:layout_weight="12"
+    android:layout_weight="10"
     android:padding="2dp"
     android:textColor="@android:color/black"
     android:textSize="12sp"
-    android:text="Col 12" />
+    android:text="Col 10" />
