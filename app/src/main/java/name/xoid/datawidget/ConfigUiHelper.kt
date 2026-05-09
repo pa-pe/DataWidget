@@ -19,16 +19,27 @@ class ConfigUiHelper(
 ) {
     var selectedColor: Int = Color.WHITE
     var selectedAlpha: Float = 1.0f
+    var selectedFontSize: Int = 12
 
     fun setup(config: WidgetConfig) {
         binding.editUrl.setText(config.url)
         selectedColor = ColorUtils.parseColor(config.bgColor)
         selectedAlpha = config.bgAlpha
+        selectedFontSize = config.baseFontSize
         
         updateColorPreview(selectedColor)
         
         binding.seekAlpha.progress = (selectedAlpha * 100).toInt()
         binding.txtAlphaPercent.text = "${binding.seekAlpha.progress}%"
+
+        binding.seekFontSize.progress = selectedFontSize
+        binding.txtFontSize.text = "${selectedFontSize}sp"
+
+        if (config.requestType == "POST") {
+            binding.radioPost.isChecked = true
+        } else {
+            binding.radioGet.isChecked = true
+        }
 
         binding.checkScreenOn.isChecked = config.updateOnlyScreenOn
         if (config.progressVisibility == "on_tap") {
@@ -41,6 +52,16 @@ class ConfigUiHelper(
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 selectedAlpha = progress / 100f
                 binding.txtAlphaPercent.text = "$progress%"
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        binding.seekFontSize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val valToSet = progress.coerceAtLeast(6)
+                selectedFontSize = valToSet
+                binding.txtFontSize.text = "${valToSet}sp"
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}

@@ -38,6 +38,60 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="Request Type"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+        <RadioGroup
+            android:id="@+id/radio_request_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+            <RadioButton
+                android:id="@+id/radio_get"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GET"
+                android:checked="true" />
+            <RadioButton
+                android:id="@+id/radio_post"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="POST"
+                android:layout_marginStart="16dp" />
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Base Font Size"
+                android:textStyle="bold"
+                android:textSize="14sp" />
+            <TextView
+                android:id="@+id/txt_font_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/seek_font_size"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="30"
+            android:progress="12"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="Background Color"
             android:textStyle="bold"
             android:textSize="14sp" />

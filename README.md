@@ -10,7 +10,8 @@ An Android application that allows you to display dynamic data from remote JSON 
 - **Live Counters**: Built-in support for countdown timers that update in real-time.
 - **Visual Customization**:
     - **Cloud side**: Control text colors, alignment, and add separators via JSON.
-    - **Local side**: Users can customize widget background color and transparency to match their wallpaper.
+    - **Local side**: Users can customize widget background color, transparency, and **base font size** to match their wallpaper.
+- **HTTP Request Control**: Choose between **GET** and **POST** methods for fetching data.
 - **Developer Tools**: Built-in "Test" feature to validate your JSON connection and structure.
 
 ## JSON Schema Documentation

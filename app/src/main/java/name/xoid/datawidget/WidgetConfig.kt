@@ -8,5 +8,7 @@ data class WidgetConfig(
     var bgColor: String = "#FFFFFF",
     var bgAlpha: Float = 1.0f,
     var updateOnlyScreenOn: Boolean = true,
-    var progressVisibility: String = "always" // "always" or "on_tap"
+    var progressVisibility: String = "always", // "always" or "on_tap"
+    var requestType: String = "GET", // "GET" or "POST"
+    var baseFontSize: Int = 12 // Default font size in sp
 )

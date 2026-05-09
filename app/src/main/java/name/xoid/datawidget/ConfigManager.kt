@@ -42,6 +42,8 @@ object ConfigManager {
             obj.put("bg_alpha", it.bgAlpha.toDouble())
             obj.put("screen_on_only", it.updateOnlyScreenOn)
             obj.put("progress_visibility", it.progressVisibility)
+            obj.put("request_type", it.requestType)
+            obj.put("font_size", it.baseFontSize)
             array.put(obj)
         }
         prefs.edit().putString(KEY_CONFIG_LIST, array.toString()).apply()
@@ -69,7 +71,9 @@ object ConfigManager {
                     obj.optString("bg_color", "#FFFFFF"),
                     obj.optDouble("bg_alpha", 1.0).toFloat(),
                     obj.optBoolean("screen_on_only", true),
-                    obj.optString("progress_visibility", "always")
+                    obj.optString("progress_visibility", "always"),
+                    obj.optString("request_type", "GET"),
+                    obj.optInt("font_size", 12)
                 ))
             }
         } catch (e: Exception) {

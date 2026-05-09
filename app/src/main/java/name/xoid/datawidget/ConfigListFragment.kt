@@ -102,6 +102,9 @@ class ConfigListFragment : Fragment() {
                     val progVis = if (editBinding.radioOnTap.isChecked) "on_tap" else "always"
                     config.progressVisibility = progVis
                     
+                    config.requestType = if (editBinding.radioPost.isChecked) "POST" else "GET"
+                    config.baseFontSize = helper.selectedFontSize
+                    
                     ConfigManager.saveConfigs(requireContext(), configs)
                     refreshList()
                 } catch (e: Exception) {

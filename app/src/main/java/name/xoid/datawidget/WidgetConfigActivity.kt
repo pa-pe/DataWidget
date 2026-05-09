@@ -52,6 +52,8 @@ class WidgetConfigActivity : AppCompatActivity() {
             val alpha = helper.selectedAlpha
             val screenOnOnly = binding.checkScreenOn.isChecked
             val progVis = if (binding.radioOnTap.isChecked) "on_tap" else "always"
+            val requestType = if (binding.radioPost.isChecked) "POST" else "GET"
+            val fontSize = helper.selectedFontSize
 
             if (url.isEmpty()) {
                 Toast.makeText(this, "URL cannot be empty", Toast.LENGTH_SHORT).show()
@@ -60,7 +62,7 @@ class WidgetConfigActivity : AppCompatActivity() {
 
             try {
                 WidgetSettings.saveUrl(this, appWidgetId, url)
-                WidgetSettings.saveBgSettings(this, appWidgetId, helper.selectedColor, alpha, screenOnOnly, progVis)
+                WidgetSettings.saveSettings(this, appWidgetId, helper.selectedColor, alpha, screenOnOnly, progVis, requestType, fontSize)
 
                 // Also add/update in the global config library
                 val configs = ConfigManager.getConfigs(this)
@@ -70,8 +72,10 @@ class WidgetConfigActivity : AppCompatActivity() {
                     existing.bgAlpha = alpha
                     existing.updateOnlyScreenOn = screenOnOnly
                     existing.progressVisibility = progVis
+                    existing.requestType = requestType
+                    existing.baseFontSize = fontSize
                 } else {
-                    configs.add(WidgetConfig("Widget $appWidgetId", url, colorStr, alpha, screenOnOnly, progVis))
+                    configs.add(WidgetConfig("Widget $appWidgetId", url, colorStr, alpha, screenOnOnly, progVis, requestType, fontSize))
                 }
                 ConfigManager.saveConfigs(this, configs)
 

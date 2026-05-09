@@ -133,12 +133,21 @@ class UpdateService : Service() {
 
     private fun fetchData(appWidgetId: Int) {
         val urlString = WidgetSettings.getUrl(this, appWidgetId) ?: AppConfig.DEFAULT_JSON_URL
+        val requestType = WidgetSettings.getRequestType(this, appWidgetId)
+        
         thread {
             try {
                 val url = URL(urlString)
                 val connection = url.openConnection() as HttpURLConnection
+                connection.requestMethod = requestType
                 connection.connectTimeout = 5000
                 connection.readTimeout = 5000
+                
+                if (requestType == "POST") {
+                    connection.doOutput = true
+                    // You could add POST data here in the future
+                }
+
                 val content = connection.inputStream.bufferedReader().use { it.readText() }
 
                 cachedData[appWidgetId] = content
@@ -232,6 +241,7 @@ class UpdateService : Service() {
             }
 
             val rowsArray = jsonObject.getJSONArray("rows")
+            val baseFontSize = WidgetSettings.getFontSize(context, appWidgetId)
 
             val currentTimeSeconds = System.currentTimeMillis() / 1000
 
@@ -266,6 +276,9 @@ class UpdateService : Service() {
                     } else {
                         RemoteViews(context.packageName, R.layout.widget_col_12)
                     }
+
+                    // Apply font size
+                    cellView.setTextViewTextSize(R.id.item_text, android.util.TypedValue.COMPLEX_UNIT_SP, baseFontSize.toFloat())
 
                     if (colJson.optString("type") == "countdown") {
                         val target = colJson.getLong("target_timestamp")

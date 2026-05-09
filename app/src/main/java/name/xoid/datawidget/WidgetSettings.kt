@@ -10,6 +10,8 @@ object WidgetSettings {
     private const val KEY_BG_ALPHA_PREFIX = "bg_alpha_"
     private const val KEY_SCREEN_ON_ONLY_PREFIX = "screen_on_only_"
     private const val KEY_PROGRESS_VISIBILITY_PREFIX = "progress_visibility_"
+    private const val KEY_REQUEST_TYPE_PREFIX = "request_type_"
+    private const val KEY_FONT_SIZE_PREFIX = "font_size_"
 
     fun saveUrl(context: Context, appWidgetId: Int, url: String) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -21,14 +23,29 @@ object WidgetSettings {
         return prefs.getString(KEY_URL_PREFIX + appWidgetId, null)
     }
 
-    fun saveBgSettings(context: Context, appWidgetId: Int, color: Int, alpha: Float, screenOnOnly: Boolean, progressVisibility: String) {
+    fun saveSettings(
+        context: Context, 
+        appWidgetId: Int, 
+        color: Int, 
+        alpha: Float, 
+        screenOnOnly: Boolean, 
+        progressVisibility: String,
+        requestType: String,
+        fontSize: Int
+    ) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit()
             .putInt(KEY_BG_COLOR_PREFIX + appWidgetId, color)
             .putFloat(KEY_BG_ALPHA_PREFIX + appWidgetId, alpha)
             .putBoolean(KEY_SCREEN_ON_ONLY_PREFIX + appWidgetId, screenOnOnly)
             .putString(KEY_PROGRESS_VISIBILITY_PREFIX + appWidgetId, progressVisibility)
+            .putString(KEY_REQUEST_TYPE_PREFIX + appWidgetId, requestType)
+            .putInt(KEY_FONT_SIZE_PREFIX + appWidgetId, fontSize)
             .apply()
+    }
+
+    fun saveBgSettings(context: Context, appWidgetId: Int, color: Int, alpha: Float, screenOnOnly: Boolean, progressVisibility: String) {
+        saveSettings(context, appWidgetId, color, alpha, screenOnOnly, progressVisibility, getRequestType(context, appWidgetId), getFontSize(context, appWidgetId))
     }
 
     fun getBgColor(context: Context, appWidgetId: Int): Int {
@@ -51,6 +68,16 @@ object WidgetSettings {
         return prefs.getString(KEY_PROGRESS_VISIBILITY_PREFIX + appWidgetId, "always") ?: "always"
     }
 
+    fun getRequestType(context: Context, appWidgetId: Int): String {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return prefs.getString(KEY_REQUEST_TYPE_PREFIX + appWidgetId, "GET") ?: "GET"
+    }
+
+    fun getFontSize(context: Context, appWidgetId: Int): Int {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return prefs.getInt(KEY_FONT_SIZE_PREFIX + appWidgetId, 12)
+    }
+
     fun deleteSettings(context: Context, appWidgetId: Int) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit()
@@ -59,6 +86,8 @@ object WidgetSettings {
             .remove(KEY_BG_ALPHA_PREFIX + appWidgetId)
             .remove(KEY_SCREEN_ON_ONLY_PREFIX + appWidgetId)
             .remove(KEY_PROGRESS_VISIBILITY_PREFIX + appWidgetId)
+            .remove(KEY_REQUEST_TYPE_PREFIX + appWidgetId)
+            .remove(KEY_FONT_SIZE_PREFIX + appWidgetId)
             .apply()
     }
 
