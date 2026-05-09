@@ -14,6 +14,8 @@ import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.concurrent.thread
 import org.json.JSONObject
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 
 import name.xoid.datawidget.databinding.LayoutConfigEditBinding
 
@@ -76,6 +78,25 @@ class ConfigListFragment : Fragment() {
         dialogBinding.btnTest.setOnClickListener {
             dialog.dismiss()
             runTest(config)
+        }
+
+        dialogBinding.btnPin.setOnClickListener {
+            dialog.dismiss()
+            pinWidget(config)
+        }
+
+        dialogBinding.btnDelete.setOnClickListener {
+            dialog.dismiss()
+            AlertDialog.Builder(requireContext())
+                .setTitle("Delete Configuration")
+                .setMessage("Are you sure you want to remove this from your library?")
+                .setPositiveButton("Delete") { _, _ ->
+                    configs.remove(config)
+                    ConfigManager.saveConfigs(requireContext(), configs)
+                    refreshList()
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
         }
 
         dialog.show()
@@ -191,6 +212,23 @@ class ConfigListFragment : Fragment() {
                     .setPositiveButton("OK", null)
                     .show()
             }
+        }
+    }
+
+    private fun pinWidget(config: WidgetConfig) {
+        val appWidgetManager = AppWidgetManager.getInstance(requireContext())
+        val componentName = ComponentName(requireContext(), DataWidgetProvider::class.java)
+
+        if (appWidgetManager.isRequestPinAppWidgetSupported) {
+            // We can't set the URL before the widget ID exists, 
+            // but we can pass it to a callback receiver or just let the user 
+            // click Save in the config activity that will open.
+            
+            // For now, we just start the pinning process. 
+            // On most devices, the system will then launch our Configuration Activity.
+            appWidgetManager.requestPinAppWidget(componentName, null, null)
+        } else {
+            Toast.makeText(requireContext(), "Your launcher does not support direct pinning", Toast.LENGTH_SHORT).show()
         }
     }
 

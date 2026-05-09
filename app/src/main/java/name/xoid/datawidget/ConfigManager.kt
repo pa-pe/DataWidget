@@ -54,10 +54,10 @@ object ConfigManager {
         val json = prefs.getString(KEY_CONFIG_LIST, null)
         
         if (json == null) {
-            // Default list if nothing saved
-            return mutableListOf(
-                WidgetConfig("Countdown 2030 (GitHub)", AppConfig.DEFAULT_JSON_URL)
-            )
+            // First run: Initialize with examples and SAVE them immediately
+            val initialList = ExampleProvider.EXAMPLES.map { it.copy() }.toMutableList()
+            saveConfigs(context, initialList)
+            return initialList
         }
 
         val list = mutableListOf<WidgetConfig>()
@@ -77,7 +77,8 @@ object ConfigManager {
                 ))
             }
         } catch (e: Exception) {
-            list.add(WidgetConfig("Countdown 2030 (GitHub)", AppConfig.DEFAULT_JSON_URL))
+            // If something is broken, return examples as safety net
+            return ExampleProvider.EXAMPLES.map { it.copy() }.toMutableList()
         }
         return list
     }

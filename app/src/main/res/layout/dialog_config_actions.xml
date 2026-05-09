@@ -18,4 +18,20 @@
         android:text="Test"
         android:layout_marginTop="8dp" />
 
+    <Button
+        android:id="@+id/btn_pin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pin to Home Screen"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/btn_delete"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Delete from Library"
+        android:textColor="#FF0000"
+        android:layout_marginTop="16dp" />
+
 </LinearLayout>
