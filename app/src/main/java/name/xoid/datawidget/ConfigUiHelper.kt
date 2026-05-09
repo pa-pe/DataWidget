@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.GridView
 import android.widget.SeekBar
+import androidx.core.widget.doAfterTextChanged
 import name.xoid.datawidget.databinding.LayoutConfigEditBinding
 import name.xoid.datawidget.databinding.DialogColorPickerBinding
 
@@ -27,6 +28,7 @@ class ConfigUiHelper(
         selectedAlpha = config.bgAlpha
         selectedFontSize = config.baseFontSize
         
+        binding.editBgColor.setText(config.bgColor)
         updateColorPreview(selectedColor)
         
         binding.seekAlpha.progress = (selectedAlpha * 100).toInt()
@@ -67,17 +69,28 @@ class ConfigUiHelper(
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-        binding.btnPickColor.setOnClickListener {
+        binding.viewColorPreview.setOnClickListener {
             showColorPicker { color ->
                 selectedColor = color
+                val hex = String.format("#%06X", (0xFFFFFF and color))
+                binding.editBgColor.setText(hex)
                 updateColorPreview(color)
+            }
+        }
+
+        binding.editBgColor.doAfterTextChanged { s ->
+            val colorStr = s.toString()
+            if (colorStr.isNotEmpty()) {
+                val color = ColorUtils.parseColor(colorStr)
+                // Only update preview if it looks like a valid color or we are just typing
+                selectedColor = color
+                binding.viewColorPreview.setBackgroundColor(color)
             }
         }
     }
 
     private fun updateColorPreview(color: Int) {
         binding.viewColorPreview.setBackgroundColor(color)
-        binding.txtColorHex.text = String.format("#%06X", (0xFFFFFF and color))
     }
 
     private fun showColorPicker(onColorSelected: (Int) -> Unit) {
@@ -91,7 +104,7 @@ class ConfigUiHelper(
         )
 
         val gridBinding = DialogColorPickerBinding.inflate(layoutInflater)
-        val dialog = AlertDialog.Builder(context)
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(context)
             .setTitle("Select Color")
             .setView(gridBinding.root)
             .create()
