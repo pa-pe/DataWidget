@@ -29,7 +29,9 @@ The widget is rendered based on a JSON object fetched from your URL.
 ### Row Object
 
 A row is a horizontal container for columns.
-- `cols`: Array of column objects.
+- `type`: (Optional) Set to `h-separator` for a horizontal line.
+- `cols`: Array of column objects (Required if not a separator).
+- `color`: String (Optional, for `h-separator`).
 
 ### Column/Cell Object
 
@@ -55,6 +57,7 @@ A row is a horizontal container for columns.
         { "text": "ACTIVE", "weight": "8", "color": "green", "align": "right" }
       ]
     },
+    { "type": "h-separator", "color": "#444444" },
     {
       "cols": [
         { "text": "New Year in:", "weight": "6" },

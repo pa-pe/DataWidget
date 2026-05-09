@@ -294,7 +294,17 @@ class UpdateService : Service() {
 
             for (i in 0 until rowsArray.length()) {
                 val rowJson = rowsArray.getJSONObject(i)
-                val colsArray = rowJson.getJSONArray("cols")
+                val rowType = rowJson.optString("type")
+
+                if (rowType == "h-separator") {
+                    val hSepView = RemoteViews(context.packageName, R.layout.widget_h_separator)
+                    val sepColor = rowJson.optString("color", "#CCCCCC")
+                    hSepView.setInt(R.id.separator_line, "setBackgroundColor", ColorUtils.parseColor(sepColor))
+                    root.addView(R.id.widget_container, hSepView)
+                    continue
+                }
+
+                val colsArray = rowJson.optJSONArray("cols") ?: continue
                 val rowView = RemoteViews(context.packageName, R.layout.widget_row)
 
                 for (j in 0 until colsArray.length()) {
