@@ -39,7 +39,7 @@ class UpdateService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        
+
         // Recover active widget IDs
         val appWidgetManager = AppWidgetManager.getInstance(this)
         val componentName = android.content.ComponentName(this, DataWidgetProvider::class.java)
@@ -67,9 +67,9 @@ class UpdateService : Service() {
             ACTION_UPDATE_WIDGETS -> {
                 val ids = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS)
                 Log.d("UpdateService", "Received IDs: ${ids?.joinToString()}")
-                ids?.let { 
+                ids?.let {
                     widgetIds.addAll(it.toTypedArray())
-                    it.forEach { id -> 
+                    it.forEach { id ->
                         fetchData(id)
                     }
                     updateAllWidgets()
@@ -89,11 +89,11 @@ class UpdateService : Service() {
             }
             ACTION_REMOVE_WIDGETS -> {
                 val ids = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS)
-                ids?.let { 
-                    it.forEach { id -> 
+                ids?.let {
+                    it.forEach { id ->
                         widgetIds.remove(id)
                         cachedData.remove(id)
-                    } 
+                    }
                 }
                 if (widgetIds.isEmpty()) stopSelf()
             }
@@ -105,7 +105,7 @@ class UpdateService : Service() {
         timer?.cancel()
         timer = Timer()
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-        
+
         timer?.schedule(object : TimerTask() {
             override fun run() {
                 val currentTime = System.currentTimeMillis()
@@ -113,7 +113,7 @@ class UpdateService : Service() {
 
                 widgetIds.forEach { id ->
                     val onlyScreenOn = WidgetSettings.getScreenOnOnly(this@UpdateService, id)
-                    
+
                     // Skip fetching if screen is off and setting is enabled
                     if (onlyScreenOn && !isScreenOn) {
                         return@forEach
@@ -122,7 +122,7 @@ class UpdateService : Service() {
                     val nextFetch = nextFetchTime[id] ?: 0L
                     if (currentTime >= nextFetch) {
                         // Avoid immediate re-trigger by setting a temporary future time
-                        nextFetchTime[id] = currentTime + 10000 
+                        nextFetchTime[id] = currentTime + 10000
                         fetchData(id)
                     }
                 }
@@ -140,23 +140,23 @@ class UpdateService : Service() {
                 connection.connectTimeout = 5000
                 connection.readTimeout = 5000
                 val content = connection.inputStream.bufferedReader().use { it.readText() }
-                
+
                 cachedData[appWidgetId] = content
                 fetchError[appWidgetId] = false
                 val now = System.currentTimeMillis()
                 lastFetchTime[appWidgetId] = now
-                
+
                 // Parse intervals from JSON
                 val json = JSONObject(content)
                 val intervalSec = json.optLong("update_interval_sec", AppConfig.DEFAULT_FETCH_INTERVAL_SEC)
                 val nextAt = json.optLong("next_update_at", -1L) // timestamp in seconds
-                
+
                 nextFetchTime[appWidgetId] = if (nextAt > 0) {
                     nextAt * 1000
                 } else {
                     now + (intervalSec * 1000)
                 }
-                
+
                 Log.d("UpdateService", "Fetched data for $appWidgetId. Next fetch at ${nextFetchTime[appWidgetId]}")
                 updateAllWidgets() // Update UI immediately after fetch
             } catch (e: Exception) {
@@ -184,22 +184,22 @@ class UpdateService : Service() {
         }
     }
 
-    private fun updateWidget(context: android.content.Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
+    private fun updateWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
         Log.d("UpdateService", "updateWidget called for $appWidgetId")
         val root = RemoteViews(context.packageName, R.layout.widget_main)
-        
+
         try {
-            val jsonString = cachedData[appWidgetId] 
+            val jsonString = cachedData[appWidgetId]
                 ?: throw Exception("Waiting for data from GitHub...")
             val jsonObject = JSONObject(jsonString)
 
             // Background color and transparency from WidgetSettings (User customization)
             val userBgColor = WidgetSettings.getBgColor(context, appWidgetId)
             val userBgAlpha = WidgetSettings.getBgAlpha(context, appWidgetId)
-            
+
             // Fallback to JSON if user hasn't set anything? 
             // For now, let's assume WidgetSettings always has a default (White, 1.0)
-            
+
             val finalColor = Color.argb(
                 (userBgAlpha * 255).toInt().coerceIn(0, 255),
                 Color.red(userBgColor),
@@ -212,7 +212,7 @@ class UpdateService : Service() {
             val progVis = WidgetSettings.getProgressVisibility(context, appWidgetId)
             val isControlsVisible = controlsVisible[appWidgetId] ?: false
             val shouldShowProgress = if (progVis == "on_tap") isControlsVisible else true
-            
+
             root.setViewVisibility(R.id.fetch_progress, if (shouldShowProgress) View.VISIBLE else View.GONE)
 
             val hasError = fetchError[appWidgetId] ?: false
@@ -237,7 +237,7 @@ class UpdateService : Service() {
 
             // Re-apply control setup (I moved it during the previous edit, putting it back)
             setupControls(context, root, appWidgetId)
-            
+
             root.removeAllViews(R.id.widget_container)
 
             for (i in 0 until rowsArray.length()) {
@@ -248,7 +248,7 @@ class UpdateService : Service() {
                 for (j in 0 until colsArray.length()) {
                     val colJson = colsArray.getJSONObject(j)
                     val type = colJson.optString("type")
-                    
+
                     if (type == "v-separator") {
                         val sepView = RemoteViews(context.packageName, R.layout.widget_v_separator)
                         val sepColor = colJson.optString("color", "#CCCCCC")
@@ -260,7 +260,7 @@ class UpdateService : Service() {
                     val weight = colJson.optString("weight", "12")
                     val layoutName = "widget_col_$weight"
                     val layoutId = context.resources.getIdentifier(layoutName, "layout", context.packageName)
-                    
+
                     val cellView = if (layoutId != 0) {
                         RemoteViews(context.packageName, layoutId)
                     } else {
@@ -275,7 +275,13 @@ class UpdateService : Service() {
                             val hours = (diff % 86400) / 3600
                             val minutes = (diff % 3600) / 60
                             val seconds = diff % 60
-                            String.format(Locale.US, "%dd %02d:%02d:%02d", days, hours, minutes, seconds)
+                            if (days != 0L){
+                                String.format(Locale.US, "%dd %02d:%02d:%02d", days, hours, minutes, seconds)
+                            } else if (hours != 0L) {
+                                String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds)
+                            } else {
+                                String.format(Locale.US, "%02d:%02d", minutes, seconds)
+                            }
                         } else {
                             "Happy New Year!"
                         }
