@@ -33,6 +33,7 @@ class UpdateService : Service() {
     private val nextFetchTime = mutableMapOf<Int, Long>()
     private val lastFetchTime = mutableMapOf<Int, Long>()
     private val fetchError = mutableMapOf<Int, Boolean>()
+    private val lastErrorMessage = mutableMapOf<Int, String>()
     private val controlsVisible = mutableMapOf<Int, Boolean>()
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -145,18 +146,21 @@ class UpdateService : Service() {
                 
                 if (requestType == "POST") {
                     connection.doOutput = true
-                    // You could add POST data here in the future
                 }
 
                 val content = connection.inputStream.bufferedReader().use { it.readText() }
 
+                // Validate JSON
+                val json = JSONObject(content)
+
                 cachedData[appWidgetId] = content
                 fetchError[appWidgetId] = false
+                lastErrorMessage.remove(appWidgetId)
+
                 val now = System.currentTimeMillis()
                 lastFetchTime[appWidgetId] = now
 
                 // Parse intervals from JSON
-                val json = JSONObject(content)
                 val intervalSec = json.optLong("update_interval_sec", AppConfig.DEFAULT_FETCH_INTERVAL_SEC)
                 val nextAt = json.optLong("next_update_at", -1L) // timestamp in seconds
 
@@ -169,10 +173,13 @@ class UpdateService : Service() {
                 Log.d("UpdateService", "Fetched data for $appWidgetId. Next fetch at ${nextFetchTime[appWidgetId]}")
                 updateAllWidgets() // Update UI immediately after fetch
             } catch (e: Exception) {
-                Log.e("UpdateService", "Error fetching data", e)
+                Log.e("UpdateService", "Error fetching/parsing data", e)
                 fetchError[appWidgetId] = true
-                // Retry in a bit on error
-                nextFetchTime[appWidgetId] = System.currentTimeMillis() + 10000
+                
+                lastErrorMessage[appWidgetId] = if (e is org.json.JSONException) "JSON Error" else "Connection Problem"
+
+                // On error, schedule next fetch in 1 minute as requested
+                nextFetchTime[appWidgetId] = System.currentTimeMillis() + 60000
                 updateAllWidgets() // Show error state immediately
             }
         }
@@ -224,10 +231,15 @@ class UpdateService : Service() {
 
             root.setViewVisibility(R.id.fetch_progress, if (shouldShowProgress) View.VISIBLE else View.GONE)
 
+            // Update dedicated error message
             val hasError = fetchError[appWidgetId] ?: false
             if (hasError) {
+                root.setViewVisibility(R.id.txt_error, View.VISIBLE)
+                root.setTextViewText(R.id.txt_error, "⚠ ${lastErrorMessage[appWidgetId]}")
                 root.setProgressBar(R.id.fetch_progress, 1000, 1000, false)
             } else {
+                root.setViewVisibility(R.id.txt_error, View.GONE)
+                
                 val next = nextFetchTime[appWidgetId] ?: 0L
                 val last = lastFetchTime[appWidgetId] ?: 0L
                 if (next > last) {
@@ -321,8 +333,12 @@ class UpdateService : Service() {
         } catch (e: Exception) {
             Log.e("UpdateService", "Error parsing JSON", e)
             // Show error on widget
+            setupControls(context, root, appWidgetId) // Ensure buttons are still there
+            root.removeAllViews(R.id.widget_container)
+            
             val errorView = RemoteViews(context.packageName, R.layout.widget_col_12)
-            errorView.setTextViewText(R.id.item_text, "Error: ${e.message}")
+            errorView.setTextViewText(R.id.item_text, "❌ Layout Error: ${e.message}")
+            errorView.setTextColor(R.id.item_text, Color.RED)
             root.addView(R.id.widget_container, errorView)
         }
 
