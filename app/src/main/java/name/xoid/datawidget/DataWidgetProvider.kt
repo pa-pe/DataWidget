@@ -58,7 +58,7 @@ class DataWidgetProvider : AppWidgetProvider() {
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
         super.onDeleted(context, appWidgetIds)
         for (id in appWidgetIds) {
-            WidgetSettings.deleteUrl(context, id)
+            WidgetSettings.deleteSettings(context, id)
         }
         val intent = Intent(context, UpdateService::class.java).apply {
             action = UpdateService.ACTION_REMOVE_WIDGETS

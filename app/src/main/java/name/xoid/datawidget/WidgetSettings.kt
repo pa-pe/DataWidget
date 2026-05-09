@@ -2,6 +2,7 @@ package name.xoid.datawidget
 
 import android.content.Context
 import android.graphics.Color
+import androidx.core.content.edit
 
 object WidgetSettings {
     private const val PREFS_NAME = "WidgetSettings"
@@ -17,7 +18,7 @@ object WidgetSettings {
 
     fun saveUrl(context: Context, appWidgetId: Int, url: String) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putString(KEY_URL_PREFIX + appWidgetId, url).apply()
+        prefs.edit { putString(KEY_URL_PREFIX + appWidgetId, url) }
     }
 
     fun getUrl(context: Context, appWidgetId: Int): String? {
@@ -27,7 +28,7 @@ object WidgetSettings {
 
     fun saveName(context: Context, appWidgetId: Int, name: String) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putString(KEY_NAME_PREFIX + appWidgetId, name).apply()
+        prefs.edit { putString(KEY_NAME_PREFIX + appWidgetId, name) }
     }
 
     fun getName(context: Context, appWidgetId: Int): String? {
@@ -37,7 +38,7 @@ object WidgetSettings {
 
     fun saveConfigId(context: Context, appWidgetId: Int, configId: String) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putString(KEY_CONFIG_ID_PREFIX + appWidgetId, configId).apply()
+        prefs.edit { putString(KEY_CONFIG_ID_PREFIX + appWidgetId, configId) }
     }
 
     fun getConfigId(context: Context, appWidgetId: Int): String? {
@@ -56,18 +57,14 @@ object WidgetSettings {
         fontSize: Int
     ) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit()
-            .putInt(KEY_BG_COLOR_PREFIX + appWidgetId, color)
-            .putFloat(KEY_BG_ALPHA_PREFIX + appWidgetId, alpha)
-            .putBoolean(KEY_SCREEN_ON_ONLY_PREFIX + appWidgetId, screenOnOnly)
-            .putString(KEY_PROGRESS_VISIBILITY_PREFIX + appWidgetId, progressVisibility)
-            .putString(KEY_REQUEST_TYPE_PREFIX + appWidgetId, requestType)
-            .putInt(KEY_FONT_SIZE_PREFIX + appWidgetId, fontSize)
-            .apply()
-    }
-
-    fun saveBgSettings(context: Context, appWidgetId: Int, color: Int, alpha: Float, screenOnOnly: Boolean, progressVisibility: String) {
-        saveSettings(context, appWidgetId, color, alpha, screenOnOnly, progressVisibility, getRequestType(context, appWidgetId), getFontSize(context, appWidgetId))
+        prefs.edit {
+            putInt(KEY_BG_COLOR_PREFIX + appWidgetId, color)
+            putFloat(KEY_BG_ALPHA_PREFIX + appWidgetId, alpha)
+            putBoolean(KEY_SCREEN_ON_ONLY_PREFIX + appWidgetId, screenOnOnly)
+            putString(KEY_PROGRESS_VISIBILITY_PREFIX + appWidgetId, progressVisibility)
+            putString(KEY_REQUEST_TYPE_PREFIX + appWidgetId, requestType)
+            putInt(KEY_FONT_SIZE_PREFIX + appWidgetId, fontSize)
+        }
     }
 
     fun getBgColor(context: Context, appWidgetId: Int): Int {
@@ -102,20 +99,16 @@ object WidgetSettings {
 
     fun deleteSettings(context: Context, appWidgetId: Int) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit()
-            .remove(KEY_URL_PREFIX + appWidgetId)
-            .remove(KEY_NAME_PREFIX + appWidgetId)
-            .remove(KEY_CONFIG_ID_PREFIX + appWidgetId)
-            .remove(KEY_BG_COLOR_PREFIX + appWidgetId)
-            .remove(KEY_BG_ALPHA_PREFIX + appWidgetId)
-            .remove(KEY_SCREEN_ON_ONLY_PREFIX + appWidgetId)
-            .remove(KEY_PROGRESS_VISIBILITY_PREFIX + appWidgetId)
-            .remove(KEY_REQUEST_TYPE_PREFIX + appWidgetId)
-            .remove(KEY_FONT_SIZE_PREFIX + appWidgetId)
-            .apply()
-    }
-
-    fun deleteUrl(context: Context, appWidgetId: Int) {
-        deleteSettings(context, appWidgetId)
+        prefs.edit {
+            remove(KEY_URL_PREFIX + appWidgetId)
+            remove(KEY_NAME_PREFIX + appWidgetId)
+            remove(KEY_CONFIG_ID_PREFIX + appWidgetId)
+            remove(KEY_BG_COLOR_PREFIX + appWidgetId)
+            remove(KEY_BG_ALPHA_PREFIX + appWidgetId)
+            remove(KEY_SCREEN_ON_ONLY_PREFIX + appWidgetId)
+            remove(KEY_PROGRESS_VISIBILITY_PREFIX + appWidgetId)
+            remove(KEY_REQUEST_TYPE_PREFIX + appWidgetId)
+            remove(KEY_FONT_SIZE_PREFIX + appWidgetId)
+        }
     }
 }

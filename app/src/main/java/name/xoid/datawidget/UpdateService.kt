@@ -135,7 +135,7 @@ class UpdateService : Service() {
     private fun startTimer() {
         timer?.cancel()
         timer = Timer()
-        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        val powerManager = getSystemService(POWER_SERVICE) as PowerManager
 
         timer?.schedule(object : TimerTask() {
             override fun run() {
@@ -220,7 +220,7 @@ class UpdateService : Service() {
 
     private fun updateAllWidgets() {
         val appWidgetManager = AppWidgetManager.getInstance(this)
-        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        val powerManager = getSystemService(POWER_SERVICE) as PowerManager
         val isScreenOn = powerManager.isInteractive
 
         for (id in widgetIds) {
@@ -389,7 +389,7 @@ class UpdateService : Service() {
         appWidgetManager.updateAppWidget(appWidgetId, root)
     }
 
-    private fun setupControls(context: android.content.Context, root: RemoteViews, appWidgetId: Int) {
+    private fun setupControls(context: Context, root: RemoteViews, appWidgetId: Int) {
         // Setup toggle click on root
         val toggleIntent = Intent(context, UpdateService::class.java).apply {
             action = ACTION_TOGGLE_CONTROLS

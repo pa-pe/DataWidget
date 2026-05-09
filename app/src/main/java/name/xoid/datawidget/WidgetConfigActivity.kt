@@ -113,7 +113,6 @@ class WidgetConfigActivity : AppCompatActivity() {
                 PendingPinConfig.config = null
 
                 // Update the widget immediately
-                val appWidgetManager = AppWidgetManager.getInstance(this)
                 val serviceIntent = Intent(this, UpdateService::class.java).apply {
                     action = UpdateService.ACTION_UPDATE_WIDGETS
                     putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
@@ -124,7 +123,7 @@ class WidgetConfigActivity : AppCompatActivity() {
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                 setResult(RESULT_OK, resultValue)
                 finish()
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 Toast.makeText(this, "Error saving settings", Toast.LENGTH_SHORT).show()
             }
         }

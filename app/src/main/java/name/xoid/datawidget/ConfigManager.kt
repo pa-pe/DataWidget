@@ -1,8 +1,7 @@
 package name.xoid.datawidget
 
 import android.content.Context
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
+import androidx.core.content.edit
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -26,7 +25,7 @@ object ConfigManager {
             obj.put("font_size", it.baseFontSize)
             array.put(obj)
         }
-        prefs.edit().putString(KEY_CONFIG_LIST, array.toString()).apply()
+        prefs.edit { putString(KEY_CONFIG_LIST, array.toString()) }
     }
 
     fun getConfigs(context: Context): MutableList<WidgetConfig> {
@@ -54,10 +53,10 @@ object ConfigManager {
                     obj.optString("progress_visibility", "always"),
                     obj.optString("request_type", "GET"),
                     obj.optInt("font_size", 12),
-                    obj.optString("id", System.currentTimeMillis().toString() + i)
+                    obj.optString("id", obj.optString("id", System.currentTimeMillis().toString() + i))
                 ))
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             // If something is broken, return examples as safety net
             return ExampleProvider.EXAMPLES.map { it.copy() }.toMutableList()
         }
