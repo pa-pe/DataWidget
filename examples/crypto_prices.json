@@ -1,0 +1,28 @@
+{
+  "update_interval_sec": 60,
+  "bg_color": "#000000",
+  "bg_alpha": 1.0,
+  "rows": [
+    {
+      "cols": [
+        { "text": "BTC", "weight": "4" },
+        { "text": "$96,432", "weight": "4", "align": "center" },
+        { "text": "+2.4%", "weight": "4", "align": "right", "color": "green" }
+      ]
+    },
+    {
+      "cols": [
+        { "text": "ETH", "weight": "4" },
+        { "text": "$2,745", "weight": "4", "align": "center" },
+        { "text": "-1.2%", "weight": "4", "align": "right", "color": "red" }
+      ]
+    },
+    {
+      "cols": [
+        { "text": "SOL", "weight": "4" },
+        { "text": "$212", "weight": "4", "align": "center" },
+        { "text": "+15.8%", "weight": "4", "align": "right", "color": "green" }
+      ]
+    }
+  ]
+}

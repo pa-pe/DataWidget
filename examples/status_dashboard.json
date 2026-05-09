@@ -1,0 +1,32 @@
+{
+  "update_interval_sec": 300,
+  "bg_color": "#212121",
+  "bg_alpha": 0.9,
+  "rows": [
+    {
+      "cols": [
+        { "text": "SYSTEM STATUS", "weight": "12", "align": "center", "color": "#FFD700" }
+      ]
+    },
+    { "type": "h-separator", "color": "#444" },
+    {
+      "cols": [
+        { "text": "CPU Load", "weight": "6" },
+        { "text": "24%", "weight": "6", "align": "right", "color": "green" }
+      ]
+    },
+    {
+      "cols": [
+        { "text": "Memory", "weight": "6" },
+        { "text": "4.2 GB", "weight": "6", "align": "right", "color": "yellowgreen" }
+      ]
+    },
+    { "type": "h-separator", "color": "#444" },
+    {
+      "cols": [
+        { "text": "Uptime:", "weight": "4" },
+        { "text": "12d 04:22:10", "weight": "8", "align": "right" }
+      ]
+    }
+  ]
+}

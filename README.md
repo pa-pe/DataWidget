@@ -72,6 +72,9 @@ A row is a horizontal container for columns.
 
 You can find more JSON templates in the `/examples` directory of this repository:
 - `countdown_2030.json`: A simple layout with a text label and a live countdown timer.
+- `separators_demo.json`: Showcases both vertical and horizontal separators with different colors.
+- `status_dashboard.json`: A system-style dashboard with multiple rows, custom alignment, and labels.
+- `crypto_prices.json`: Demonstrates a multi-column table with color-coded trends (green/red).
 
 ## Battery Optimization & Privacy
 

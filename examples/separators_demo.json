@@ -1,0 +1,24 @@
+{
+  "update_interval_sec": 3600,
+  "bg_color": "#1A237E",
+  "bg_alpha": 0.8,
+  "rows": [
+    {
+      "cols": [
+        { "text": "TOP", "weight": "6", "align": "center" },
+        { "type": "v-separator", "color": "#FFFFFF" },
+        { "text": "SECTION", "weight": "6", "align": "center" }
+      ]
+    },
+    { "type": "h-separator", "color": "#FFFFFF" },
+    {
+      "cols": [
+        { "text": "Left", "weight": "3", "align": "left" },
+        { "type": "v-separator", "color": "#888888" },
+        { "text": "Center Content", "weight": "6", "align": "center" },
+        { "type": "v-separator", "color": "#888888" },
+        { "text": "Right", "weight": "3", "align": "right" }
+      ]
+    }
+  ]
+}
