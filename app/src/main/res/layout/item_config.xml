@@ -22,11 +22,11 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/config_url"
+            android:id="@+id/config_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="https://example.com/config.json"
-            android:textSize="14sp"
+            android:text="Not pinned"
+            android:textSize="13sp"
             android:textColor="@android:color/darker_gray"
             android:layout_marginTop="4dp" />
 

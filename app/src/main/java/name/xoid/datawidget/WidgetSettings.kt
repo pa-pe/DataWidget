@@ -4,6 +4,19 @@ import android.content.Context
 import android.graphics.Color
 import androidx.core.content.edit
 
+/**
+ * ARCHITECTURE NOTE:
+ * This application uses a dual-storage system:
+ * 
+ * 1. LIBRARY (ConfigManager): Stores "Master Templates". These are the cards you see in the main app.
+ *    Any change here propagates to all widgets linked to this template ID.
+ * 
+ * 2. INSTANCES (WidgetSettings): Stores data for a specific widget "square" on the home screen.
+ *    - Each widget has a unique 'appWidgetId' assigned by Android.
+ *    - Each widget stores a 'config_id' which points to a Master Template in the Library.
+ *    - If a widget is deleted from the screen, only its INSTANCE data is wiped.
+ *    - If a widget is customized manually (URL change), the link to the Library is broken.
+ */
 object WidgetSettings {
     private const val PREFS_NAME = "WidgetSettings"
     private const val KEY_URL_PREFIX = "url_"

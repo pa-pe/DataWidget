@@ -5,6 +5,10 @@ import androidx.core.content.edit
 import org.json.JSONArray
 import org.json.JSONObject
 
+/**
+ * Manages the "Master Copy" of all configurations.
+ * These templates are displayed in the main app list.
+ */
 object ConfigManager {
     private const val PREFS_NAME = "Configs"
     private const val KEY_CONFIG_LIST = "config_list"

@@ -47,12 +47,45 @@ class ConfigListFragment : Fragment() {
     }
 
     private fun refreshList() {
+        val context = requireContext()
         binding.itemsContainer.removeAllViews()
+        
+        // Count active widgets for each config ID
+        val appWidgetManager = AppWidgetManager.getInstance(context)
+        val componentName = ComponentName(context, DataWidgetProvider::class.java)
+        val allWidgetIds = appWidgetManager.getAppWidgetIds(componentName)
+        
+        val usageCounts = mutableMapOf<String, Int>()
+        for (id in allWidgetIds) {
+            val configId = WidgetSettings.getConfigId(context, id)
+            if (configId != null) {
+                usageCounts[configId] = (usageCounts[configId] ?: 0) + 1
+            } else {
+                // FALLBACK: If old widget without ID, try to match by URL
+                val url = WidgetSettings.getUrl(context, id)
+                if (url != null) {
+                    val matchingConfig = configs.find { it.url == url }
+                    if (matchingConfig != null) {
+                        usageCounts[matchingConfig.id] = (usageCounts[matchingConfig.id] ?: 0) + 1
+                        // Heal the widget by saving the ID link for next time
+                        WidgetSettings.saveConfigId(context, id, matchingConfig.id)
+                    }
+                }
+            }
+        }
         
         configs.forEach { config ->
             val itemBinding = ItemConfigBinding.inflate(layoutInflater, binding.itemsContainer, false)
             itemBinding.configName.text = config.name
-            itemBinding.configUrl.text = config.url
+            
+            val count = usageCounts[config.id] ?: 0
+            if (count > 0) {
+                itemBinding.configStatus.text = "Pinned widgets: $count"
+                itemBinding.configStatus.setTextColor(android.graphics.Color.parseColor("#4CAF50")) // Nice green
+            } else {
+                itemBinding.configStatus.text = "Not pinned"
+                itemBinding.configStatus.setTextColor(android.graphics.Color.GRAY)
+            }
             
             itemBinding.root.setOnClickListener {
                 showActionsDialog(config)
