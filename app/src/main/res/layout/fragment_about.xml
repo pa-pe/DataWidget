@@ -18,7 +18,8 @@
             android:layout_width="96dp"
             android:layout_height="96dp"
             android:layout_marginTop="32dp"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@mipmap/ic_launcher"
+            android:contentDescription="Data Widget Icon" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -42,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:gravity="center"
-            android:text="Display dynamic JSON data from any URL directly on your home screen with per-second precision."
+            android:text="Easily display dynamic JSON data from any URL directly on your home screen. Build your own layouts using a flexible, Bootstrap-inspired grid system with per-second precision."
             android:textSize="16sp" />
 
         <View
@@ -57,15 +58,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="View on GitHub"
+            android:text="View Project on GitHub"
             app:icon="@drawable/ic_launcher_foreground" />
 
         <Button
-            android:id="@+id/btn_copy_debug"
+            android:id="@+id/btn_examples"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Copy Debug Information" />
+            android:text="Browse JSON Examples"
+            app:icon="@android:drawable/ic_menu_search" />
 
         <TextView
             android:layout_width="wrap_content"
