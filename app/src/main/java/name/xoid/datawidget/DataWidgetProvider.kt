@@ -36,8 +36,20 @@ class DataWidgetProvider : AppWidgetProvider() {
         Log.d("DataWidgetProvider", "onUpdate called for ${appWidgetIds.joinToString()}")
         
         // Set initial "Loading..." state
+        val radiusDp = AppSettings.getWidgetRadius(context)
+        val bgResId = when {
+            radiusDp < 4 -> R.drawable.widget_bg_r0
+            radiusDp < 12 -> R.drawable.widget_bg_r8
+            radiusDp < 20 -> R.drawable.widget_bg_r16
+            radiusDp < 28 -> R.drawable.widget_bg_r24
+            else -> R.drawable.widget_bg_r32
+        }
+
         for (appWidgetId in appWidgetIds) {
             val views = RemoteViews(context.packageName, R.layout.widget_main)
+            
+            // Apply background from settings
+            views.setInt(R.id.widget_bg_image, "setImageResource", bgResId)
             
             // Setup minimal click handling even in Initializing state
             val toggleIntent = Intent(context, UpdateService::class.java).apply {

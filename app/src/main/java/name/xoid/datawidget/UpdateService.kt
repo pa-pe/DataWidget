@@ -243,6 +243,23 @@ class UpdateService : Service() {
         Log.d("UpdateService", "updateWidget called for $appWidgetId")
         val root = RemoteViews(context.packageName, R.layout.widget_main)
 
+        // Apply Global Settings: Corner Radius
+        val radiusDp = AppSettings.getWidgetRadius(context)
+        val density = context.resources.displayMetrics.density
+        val bgResId = when {
+            radiusDp < 4 -> R.drawable.widget_bg_r0
+            radiusDp < 12 -> R.drawable.widget_bg_r8
+            radiusDp < 20 -> R.drawable.widget_bg_r16
+            radiusDp < 28 -> R.drawable.widget_bg_r24
+            else -> R.drawable.widget_bg_r32
+        }
+        root.setInt(R.id.widget_bg_image, "setImageResource", bgResId)
+
+        // Adjust progress bar padding to start exactly where the corner rounding ends
+        // We add a tiny 2dp safety gap
+        val progressPaddingPx = ((radiusDp + 2) * density).toInt()
+        root.setViewPadding(R.id.fetch_progress, progressPaddingPx, 0, progressPaddingPx, 0)
+
         try {
             val jsonString = cachedData[appWidgetId]
                 ?: throw Exception("Waiting for data from GitHub...")

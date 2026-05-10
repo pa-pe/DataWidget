@@ -20,4 +20,10 @@
         android:name="name.xoid.datawidget.AboutFragment"
         android:label="About"
         tools:layout="@layout/fragment_about" />
+
+    <fragment
+        android:id="@+id/SettingsFragment"
+        android:name="name.xoid.datawidget.SettingsFragment"
+        android:label="Settings"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

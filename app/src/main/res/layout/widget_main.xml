@@ -8,7 +8,7 @@
         android:id="@+id/widget_bg_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/widget_background"
+        android:src="@drawable/widget_bg_r16"
         android:scaleType="fitXY"
         android:contentDescription="Background" />
 
@@ -24,7 +24,7 @@
             android:layout_height="2dp"
             android:max="1000"
             android:progress="0"
-            android:layout_marginHorizontal="16dp"
+            android:layout_marginHorizontal="0dp"
             android:progressBackgroundTint="#10000000"
             android:progressTint="#40000000" />
 
@@ -32,7 +32,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="8dp">
+            android:paddingHorizontal="8dp"
+            android:paddingBottom="8dp">
 
             <TextView
                 android:id="@+id/txt_error"
@@ -43,8 +44,8 @@
                 android:textStyle="bold"
                 android:visibility="gone"
                 android:gravity="center"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="4dp" />
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp" />
 
             <LinearLayout
                 android:id="@+id/widget_container"

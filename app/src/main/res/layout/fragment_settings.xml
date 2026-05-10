@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Global Widget Settings"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="24dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Widget Corner Radius"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+        <TextView
+            android:id="@+id/txt_radius_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="16dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <SeekBar
+        android:id="@+id/seek_radius"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="32"
+        android:progress="16"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="This setting affects all widgets on your home screen. Note: On older Android versions, changes might require a manual refresh."
+        android:textSize="12sp"
+        android:textColor="@android:color/darker_gray" />
+
+</LinearLayout>
