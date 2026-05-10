@@ -1,13 +1,19 @@
 package name.xoid.datawidget
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import name.xoid.datawidget.databinding.FragmentAboutBinding
-
+import android.widget.Toast
 import androidx.core.content.pm.PackageInfoCompat
+import androidx.fragment.app.Fragment
+import name.xoid.datawidget.databinding.FragmentAboutBinding
 
 class AboutFragment : Fragment() {
 
@@ -30,7 +36,28 @@ class AboutFragment : Fragment() {
         val versionName = packageInfo.versionName
         val versionCode = PackageInfoCompat.getLongVersionCode(packageInfo)
 
-        binding.textviewAbout.text = "Data Widget\nVersion: $versionName\nBuild: $versionCode\n\nDisplay remote JSON data on your home screen."
+        binding.txtVersionInfo.text = "Version $versionName ($versionCode)"
+
+        binding.btnGithub.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/pa-pe/DataWidget"))
+            startActivity(intent)
+        }
+
+        binding.btnCopyDebug.setOnClickListener {
+            val debugInfo = """
+                App: Data Widget
+                Version: $versionName
+                Build: $versionCode
+                Device: ${Build.MANUFACTURER} ${Build.MODEL}
+                Android OS: ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})
+            """.trimIndent()
+
+            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("Debug Info", debugInfo)
+            clipboard.setPrimaryClip(clip)
+            
+            Toast.makeText(context, "Debug info copied to clipboard", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onDestroyView() {
