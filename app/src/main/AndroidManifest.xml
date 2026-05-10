@@ -17,11 +17,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DataWidget">
 
+        <!--
+            Foreground Service for high-frequency widget updates.
+            Type 'specialUse' is used based on successful implementation
+            in previously published app: name.xoid.app1
+        -->
         <service
             android:name=".UpdateService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="specialUse" />
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="High-frequency widget updates for real-time data display, utilizing proven architecture from name.xoid.app1" />
+        </service>
 
         <activity
             android:name=".WidgetConfigActivity"
