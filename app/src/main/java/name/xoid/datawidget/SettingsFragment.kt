@@ -28,6 +28,7 @@ class SettingsFragment : Fragment() {
         val currentRadius = AppSettings.getWidgetRadius(requireContext())
         binding.seekRadius.progress = currentRadius
         binding.txtRadiusValue.text = "${currentRadius}dp"
+        binding.cardPreview.radius = currentRadius * resources.displayMetrics.density
 
         binding.seekRadius.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -36,6 +37,7 @@ class SettingsFragment : Fragment() {
                 val snapped = steps.minByOrNull { Math.abs(it - progress) } ?: progress
                 
                 binding.txtRadiusValue.text = "${snapped}dp"
+                binding.cardPreview.radius = snapped * resources.displayMetrics.density
                 
                 if (fromUser) {
                     if (snapped != progress) {
