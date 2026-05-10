@@ -16,7 +16,7 @@ object AppSettings {
 
     fun getWidgetRadius(context: Context): Int {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .getInt(KEY_WIDGET_RADIUS, 16) // Default 16dp
+            .getInt(KEY_WIDGET_RADIUS, AppConfig.DEFAULT_WIDGET_RADIUS)
     }
 
     fun saveWidgetPadding(context: Context, paddingDp: Int) {
@@ -27,6 +27,6 @@ object AppSettings {
 
     fun getWidgetPadding(context: Context): Int {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .getInt(KEY_WIDGET_PADDING, 8) // Default 8dp
+            .getInt(KEY_WIDGET_PADDING, AppConfig.DEFAULT_WIDGET_PADDING)
     }
 }

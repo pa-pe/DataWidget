@@ -74,7 +74,7 @@
             android:id="@+id/txt_radius_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="16dp"
+            android:text="8dp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -83,7 +83,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:max="32"
-        android:progress="16"
+        android:progress="8"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="16dp" />
 
@@ -102,7 +102,7 @@
             android:id="@+id/txt_padding_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="8dp"
+            android:text="4dp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -111,7 +111,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:max="24"
-        android:progress="8"
+        android:progress="4"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="8dp" />
 
