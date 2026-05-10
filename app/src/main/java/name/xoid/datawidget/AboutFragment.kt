@@ -42,6 +42,11 @@ class AboutFragment : Fragment() {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/pa-pe/DataWidget/tree/main/examples"))
             startActivity(intent)
         }
+
+        binding.btnPrivacy.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/pa-pe/DataWidget/blob/main/PRIVACY_POLICY.html"))
+            startActivity(intent)
+        }
     }
 
     override fun onDestroyView() {

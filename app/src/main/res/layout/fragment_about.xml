@@ -69,11 +69,19 @@
             android:text="Browse JSON Examples"
             app:icon="@android:drawable/ic_menu_search" />
 
+        <Button
+            android:id="@+id/btn_privacy"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Privacy Policy"
+            app:icon="@android:drawable/ic_lock_lock" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:text="© 2024 name.xoid"
+            android:text="© 2026 name.xoid"
             android:textColor="@android:color/darker_gray"
             android:textSize="12sp" />
 
