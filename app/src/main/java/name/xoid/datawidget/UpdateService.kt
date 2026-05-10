@@ -46,6 +46,9 @@ class UpdateService : Service() {
         val componentName = android.content.ComponentName(this, DataWidgetProvider::class.java)
         val ids = appWidgetManager.getAppWidgetIds(componentName)
         widgetIds.addAll(ids.toTypedArray())
+        
+        // Start fetching data for recovered widgets immediately
+        ids.forEach { fetchData(it) }
 
         createNotificationChannel()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
@@ -73,7 +76,10 @@ class UpdateService : Service() {
                     it.forEach { id ->
                         fetchData(id)
                     }
-                    updateAllWidgets()
+                    // Force UI update for these widgets immediately to set up controls
+                    // even if screen is off, so they are responsive.
+                    val appWidgetManager = AppWidgetManager.getInstance(this)
+                    it.forEach { id -> updateWidget(this, appWidgetManager, id) }
                 }
             }
             ACTION_TOGGLE_CONTROLS -> {

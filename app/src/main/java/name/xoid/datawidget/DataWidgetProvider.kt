@@ -2,6 +2,7 @@ package name.xoid.datawidget
 
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -12,6 +13,19 @@ class DataWidgetProvider : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("DataWidgetProvider", "onReceive: ${intent.action}")
         super.onReceive(context, intent)
+        
+        if (intent.action == Intent.ACTION_BOOT_COMPLETED || 
+            intent.action == "android.intent.action.QUICKBOOT_POWERON") {
+            val appWidgetManager = AppWidgetManager.getInstance(context)
+            val ids = appWidgetManager.getAppWidgetIds(ComponentName(context, DataWidgetProvider::class.java))
+            if (ids.isNotEmpty()) {
+                val serviceIntent = Intent(context, UpdateService::class.java).apply {
+                    action = UpdateService.ACTION_UPDATE_WIDGETS
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+                }
+                context.startForegroundService(serviceIntent)
+            }
+        }
     }
 
     override fun onUpdate(
@@ -25,6 +39,17 @@ class DataWidgetProvider : AppWidgetProvider() {
         for (appWidgetId in appWidgetIds) {
             val views = RemoteViews(context.packageName, R.layout.widget_main)
             
+            // Setup minimal click handling even in Initializing state
+            val toggleIntent = Intent(context, UpdateService::class.java).apply {
+                action = UpdateService.ACTION_TOGGLE_CONTROLS
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+            }
+            val togglePendingIntent = android.app.PendingIntent.getService(
+                context, appWidgetId, toggleIntent,
+                android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
+            )
+            views.setOnClickPendingIntent(R.id.widget_root, togglePendingIntent)
+
             // Apply background from settings
             val bgColor = WidgetSettings.getBgColor(context, appWidgetId)
             val bgAlpha = WidgetSettings.getBgAlpha(context, appWidgetId)
@@ -44,12 +69,12 @@ class DataWidgetProvider : AppWidgetProvider() {
         }
 
         // Start the service to handle updates
-        val intent = Intent(context, UpdateService::class.java).apply {
+        val serviceIntent = Intent(context, UpdateService::class.java).apply {
             action = UpdateService.ACTION_UPDATE_WIDGETS
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds)
         }
         try {
-            context.startForegroundService(intent)
+            context.startForegroundService(serviceIntent)
         } catch (e: Exception) {
             Log.e("DataWidgetProvider", "Failed to start service", e)
         }
