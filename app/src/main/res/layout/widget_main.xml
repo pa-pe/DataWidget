@@ -29,6 +29,7 @@
             android:progressTint="#40000000" />
 
         <LinearLayout
+            android:id="@+id/widget_container_inner"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"

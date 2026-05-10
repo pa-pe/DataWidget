@@ -255,6 +255,11 @@ class UpdateService : Service() {
         }
         root.setInt(R.id.widget_bg_image, "setImageResource", bgResId)
 
+        // Apply Global Settings: Content Padding
+        val contentPaddingDp = AppSettings.getWidgetPadding(context)
+        val contentPaddingPx = (contentPaddingDp * density).toInt()
+        root.setViewPadding(R.id.widget_container_inner, contentPaddingPx, contentPaddingPx, contentPaddingPx, contentPaddingPx)
+
         // Adjust progress bar padding to start exactly where the corner rounding ends
         // We add a tiny 2dp safety gap
         val progressPaddingPx = ((radiusDp + 2) * density).toInt()
