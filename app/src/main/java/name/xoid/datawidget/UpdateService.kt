@@ -256,13 +256,12 @@ class UpdateService : Service() {
             val userBgColor = if (libraryConfig != null) ColorUtils.parseColor(libraryConfig.bgColor) else WidgetSettings.getBgColor(context, appWidgetId)
             val userBgAlpha = libraryConfig?.bgAlpha ?: WidgetSettings.getBgAlpha(context, appWidgetId)
 
-            val finalColor = Color.argb(
-                (userBgAlpha * 255).toInt().coerceIn(0, 255),
-                Color.red(userBgColor),
-                Color.green(userBgColor),
-                Color.blue(userBgColor)
-            )
-            root.setInt(R.id.widget_root, "setBackgroundColor", finalColor)
+            // Use ImageView for background to keep rounded corners while changing color
+            val pureColor = Color.rgb(Color.red(userBgColor), Color.green(userBgColor), Color.blue(userBgColor))
+            root.setInt(R.id.widget_bg_image, "setColorFilter", pureColor)
+            
+            val alphaInt = (userBgAlpha * 255).toInt().coerceIn(0, 255)
+            root.setInt(R.id.widget_bg_image, "setImageAlpha", alphaInt)
 
             // Update fetch progress bar visibility and value
             val progVis = libraryConfig?.progressVisibility ?: WidgetSettings.getProgressVisibility(context, appWidgetId)

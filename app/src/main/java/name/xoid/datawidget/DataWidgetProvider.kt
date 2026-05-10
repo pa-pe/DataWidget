@@ -53,13 +53,11 @@ class DataWidgetProvider : AppWidgetProvider() {
             // Apply background from settings
             val bgColor = WidgetSettings.getBgColor(context, appWidgetId)
             val bgAlpha = WidgetSettings.getBgAlpha(context, appWidgetId)
-            val finalColor = Color.argb(
-                (bgAlpha * 255).toInt().coerceIn(0, 255),
-                Color.red(bgColor),
-                Color.green(bgColor),
-                Color.blue(bgColor)
-            )
-            views.setInt(R.id.widget_root, "setBackgroundColor", finalColor)
+            val pureColor = Color.rgb(Color.red(bgColor), Color.green(bgColor), Color.blue(bgColor))
+            views.setInt(R.id.widget_bg_image, "setColorFilter", pureColor)
+            
+            val alphaInt = (bgAlpha * 255).toInt().coerceIn(0, 255)
+            views.setInt(R.id.widget_bg_image, "setImageAlpha", alphaInt)
 
             views.removeAllViews(R.id.widget_container)
             val loadingView = RemoteViews(context.packageName, R.layout.widget_col_12)
