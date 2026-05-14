@@ -24,6 +24,7 @@ import android.widget.Toast
 import android.view.Gravity
 import android.os.PowerManager
 import android.content.Context
+import kotlin.math.abs
 
 class UpdateService : Service() {
 
@@ -366,22 +367,22 @@ class UpdateService : Service() {
                     if (colJson.optString("type") == "countdown") {
                         val target = colJson.getLong("target_timestamp")
                         val diff = target - currentTimeSeconds
-                        val text = if (diff > 0) {
-                            val days = diff / 86400
-                            val hours = (diff % 86400) / 3600
-                            val minutes = (diff % 3600) / 60
-                            val seconds = diff % 60
-                            if (days != 0L){
-                                String.format(Locale.US, "%dd %02d:%02d:%02d", days, hours, minutes, seconds)
-                            } else if (hours != 0L) {
-                                String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds)
-                            } else {
-                                String.format(Locale.US, "%02d:%02d", minutes, seconds)
-                            }
+                        val absDiff = abs(diff)
+                        val prefix = if (diff < 0) "-" else ""
+
+                        val days = absDiff / 86400
+                        val hours = (absDiff % 86400) / 3600
+                        val minutes = (absDiff % 3600) / 60
+                        val seconds = absDiff % 60
+
+                        val timeText = if (days != 0L) {
+                            String.format(Locale.US, "%dd %02d:%02d:%02d", days, hours, minutes, seconds)
+                        } else if (hours != 0L) {
+                            String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds)
                         } else {
-                            "Happy New Year!"
+                            String.format(Locale.US, "%02d:%02d", minutes, seconds)
                         }
-                        cellView.setTextViewText(R.id.item_text, text)
+                        cellView.setTextViewText(R.id.item_text, "$prefix$timeText")
                     } else {
                         cellView.setTextViewText(R.id.item_text, colJson.optString("text", ""))
                     }
