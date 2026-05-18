@@ -418,6 +418,15 @@ class UpdateService : Service() {
     }
 
     private fun setupControls(context: Context, root: RemoteViews, appWidgetId: Int) {
+        val appWidgetManager = AppWidgetManager.getInstance(context)
+        val options = appWidgetManager.getAppWidgetOptions(appWidgetId)
+        val minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
+        
+        // Hide font adjustment buttons on narrow widgets (1 or 2 cells wide)
+        // 200dp is a safe threshold where 3+ cells usually begin
+        val isNarrow = minWidth in 1..<200
+        val fontControlVisibility = if (isNarrow) View.GONE else View.VISIBLE
+
         // Setup toggle click on root
         val toggleIntent = Intent(context, UpdateService::class.java).apply {
             action = ACTION_TOGGLE_CONTROLS
@@ -460,6 +469,7 @@ class UpdateService : Service() {
             context, appWidgetId + 30000, decIntent,
             android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
         ))
+        root.setViewVisibility(R.id.btn_font_dec, fontControlVisibility)
 
         val incIntent = Intent(context, UpdateService::class.java).apply {
             action = ACTION_FONT_SIZE_INC
@@ -469,6 +479,7 @@ class UpdateService : Service() {
             context, appWidgetId + 40000, incIntent,
             android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
         ))
+        root.setViewVisibility(R.id.btn_font_inc, fontControlVisibility)
 
         // Control visibility
         val isVisible = controlsVisible[appWidgetId] ?: false
