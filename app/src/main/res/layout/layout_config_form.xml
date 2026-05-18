@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -26,14 +27,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="8dp"
-            android:paddingBottom="16dp"
-            android:paddingTop="8dp">
+            android:paddingHorizontal="12dp"
+            android:paddingBottom="16dp">
+
+            <!-- GENERAL SECTION -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="GENERAL"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="?android:attr/colorPrimary"
+                android:paddingTop="12dp"
+                android:paddingBottom="4dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Config Name"
+                android:text="Configuration Name"
                 android:textStyle="bold"
                 android:textSize="14sp" />
 
@@ -41,9 +52,20 @@
                 android:id="@+id/edit_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="My Custom Widget"
+                android:hint="e.g. My Dashboard"
                 android:inputType="textCapWords"
                 android:layout_marginBottom="8dp" />
+
+            <!-- DATA SOURCE SECTION -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="DATA SOURCE"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="?android:attr/colorPrimary"
+                android:paddingTop="16dp"
+                android:paddingBottom="4dp" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -69,10 +91,6 @@
                 android:layout_gravity="end"
                 android:layout_marginTop="-4dp" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="8dp" />
-
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -86,14 +104,11 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginBottom="8dp">
-
                 <RadioButton
                     android:id="@+id/radio_get"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="GET"
-                    android:checked="true" />
-
+                    android:text="GET" />
                 <RadioButton
                     android:id="@+id/radio_post"
                     android:layout_width="wrap_content"
@@ -102,11 +117,57 @@
                     android:layout_marginStart="16dp" />
             </RadioGroup>
 
+            <CheckBox
+                android:id="@+id/check_screen_on"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Update only when screen is on"
+                android:textSize="14sp"
+                android:layout_marginBottom="8dp" />
+
+            <!-- APPEARANCE SECTION -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="APPEARANCE"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="?android:attr/colorPrimary"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_preview"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardElevation="2dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#DDDDDD"
+                android:layout_marginBottom="16dp">
+                <LinearLayout
+                    android:id="@+id/preview_content_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                    <View
+                        android:id="@+id/preview_progress"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="#40000000" />
+                    <TextView
+                        android:id="@+id/preview_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sample Data Preview"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -114,7 +175,6 @@
                     android:text="Base Font Size"
                     android:textStyle="bold"
                     android:textSize="14sp" />
-
                 <TextView
                     android:id="@+id/txt_font_size"
                     android:layout_width="wrap_content"
@@ -128,7 +188,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="30"
-                android:progress="12"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="8dp" />
 
@@ -145,33 +204,29 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:layout_marginBottom="8dp">
-
                 <View
                     android:id="@+id/view_color_preview"
                     android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_height="40dp"
                     android:background="@android:color/white"
                     android:elevation="4dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground" />
-
                 <EditText
                     android:id="@+id/edit_bg_color"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="12dp"
                     android:hint="#FFFFFF"
-                    android:text="#FFFFFF"
-                    android:textSize="16sp" />
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -179,7 +234,6 @@
                     android:text="Transparency"
                     android:textStyle="bold"
                     android:textSize="14sp" />
-
                 <TextView
                     android:id="@+id/txt_alpha_percent"
                     android:layout_width="wrap_content"
@@ -193,22 +247,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="100"
-                android:progress="100"
                 android:layout_marginTop="4dp"
-                android:layout_marginBottom="8dp" />
-
-            <CheckBox
-                android:id="@+id/check_screen_on"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Update only when screen is on"
-                android:checked="true"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="12dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Progress Bar Visibility"
+                android:text="Progress Bar"
                 android:textStyle="bold"
                 android:textSize="14sp" />
 
@@ -216,28 +261,26 @@
                 android:id="@+id/radio_progress_vis"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginBottom="12dp">
-
+                android:orientation="horizontal"
+                android:layout_marginBottom="24dp">
                 <RadioButton
                     android:id="@+id/radio_always"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Always Show"
-                    android:checked="true" />
-
+                    android:text="Always" />
                 <RadioButton
                     android:id="@+id/radio_on_tap"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Show only on Tap" />
+                    android:text="On Tap"
+                    android:layout_marginStart="16dp" />
             </RadioGroup>
 
             <Button
                 android:id="@+id/btn_save"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Save and Update Widget"
+                android:text="Save and Update"
                 android:padding="12dp" />
         </LinearLayout>
     </LinearLayout>

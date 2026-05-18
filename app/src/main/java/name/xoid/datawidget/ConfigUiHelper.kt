@@ -38,6 +38,9 @@ class ConfigUiHelper(
         binding.seekFontSize.progress = selectedFontSize
         binding.txtFontSize.text = "${selectedFontSize}sp"
 
+        // Initial preview update
+        updateLivePreview()
+
         if (config.requestType == "POST") {
             binding.radioPost.isChecked = true
         } else {
@@ -51,6 +54,10 @@ class ConfigUiHelper(
             binding.radioAlways.isChecked = true
         }
 
+        binding.radioProgressVis.setOnCheckedChangeListener { _, _ ->
+            updateLivePreview()
+        }
+
         binding.btnExamples.setOnClickListener {
             showExamplesPicker()
         }
@@ -59,6 +66,7 @@ class ConfigUiHelper(
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 selectedAlpha = progress / 100f
                 binding.txtAlphaPercent.text = "$progress%"
+                updateLivePreview()
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
@@ -69,6 +77,7 @@ class ConfigUiHelper(
                 val valToSet = progress.coerceAtLeast(6)
                 selectedFontSize = valToSet
                 binding.txtFontSize.text = "${valToSet}sp"
+                updateLivePreview()
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
@@ -80,6 +89,7 @@ class ConfigUiHelper(
                 val hex = String.format("#%06X", (0xFFFFFF and color))
                 binding.editBgColor.setText(hex)
                 updateColorPreview(color)
+                updateLivePreview()
             }
         }
 
@@ -89,8 +99,41 @@ class ConfigUiHelper(
                 val color = ColorUtils.parseColor(colorStr)
                 selectedColor = color
                 binding.viewColorPreview.setBackgroundColor(color)
+                updateLivePreview()
             }
         }
+    }
+
+    private fun updateLivePreview() {
+        // Apply color and alpha to the preview card
+        binding.cardPreview.setCardBackgroundColor(selectedColor)
+        binding.cardPreview.alpha = selectedAlpha
+        
+        // Progress bar visibility in preview
+        binding.previewProgress.visibility = if (binding.radioAlways.isChecked) View.VISIBLE else View.GONE
+        
+        // Apply font size
+        binding.previewText.textSize = selectedFontSize.toFloat()
+        
+        // Apply global radius and padding for consistency
+        val density = context.resources.displayMetrics.density
+        val radiusPx = AppSettings.getWidgetRadius(context) * density
+        binding.cardPreview.radius = radiusPx
+        
+        val paddingPx = (AppSettings.getWidgetPadding(context) * density).toInt()
+        binding.previewContentContainer.setPadding(paddingPx, paddingPx, paddingPx, paddingPx)
+        
+        // Ensure text is visible on background
+        val brightness = (Color.red(selectedColor) * 299 + Color.green(selectedColor) * 587 + Color.blue(selectedColor) * 114) / 1000
+        binding.previewText.setTextColor(if (brightness > 128) Color.BLACK else Color.WHITE)
+        
+        // Adjust preview progress bar padding
+        val progressPaddingPx = ((AppSettings.getWidgetRadius(context) + 2) * density).toInt()
+        binding.previewProgress.setPadding(progressPaddingPx, 0, progressPaddingPx, 0)
+    }
+
+    private fun updateColorPreview(color: Int) {
+        binding.viewColorPreview.setBackgroundColor(color)
     }
 
     fun isValid(): Boolean {
@@ -113,10 +156,6 @@ class ConfigUiHelper(
         }
         
         return valid
-    }
-
-    private fun updateColorPreview(color: Int) {
-        binding.viewColorPreview.setBackgroundColor(color)
     }
 
     private fun showExamplesPicker() {
