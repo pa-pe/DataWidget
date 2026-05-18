@@ -64,66 +64,44 @@
                 android:gravity="center"
                 android:paddingTop="4dp">
 
-                <TextView
+                <ImageView
                     android:id="@+id/btn_setup"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:background="@drawable/widget_button_background"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="4dp"
-                    android:minHeight="0dp"
-                    android:minWidth="0dp"
-                    android:includeFontPadding="false"
-                    android:textSize="12sp"
-                    android:text="Setup"
-                    android:textColor="@android:color/black" />
+                    android:padding="6dp"
+                    android:src="@drawable/ic_widget_settings"
+                    android:contentDescription="Setup" />
 
-                <TextView
+                <ImageView
                     android:id="@+id/btn_font_dec"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:background="@drawable/widget_button_background"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="4dp"
-                    android:minHeight="0dp"
-                    android:minWidth="0dp"
-                    android:includeFontPadding="false"
-                    android:textSize="12sp"
-                    android:text="-"
-                    android:textStyle="bold"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_widget_remove"
                     android:layout_marginStart="8dp"
-                    android:textColor="@android:color/black" />
+                    android:contentDescription="Decrease Font" />
 
-                <TextView
+                <ImageView
                     android:id="@+id/btn_font_inc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:background="@drawable/widget_button_background"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="4dp"
-                    android:minHeight="0dp"
-                    android:minWidth="0dp"
-                    android:includeFontPadding="false"
-                    android:textSize="12sp"
-                    android:text="+"
-                    android:textStyle="bold"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_widget_add"
                     android:layout_marginStart="8dp"
-                    android:textColor="@android:color/black" />
+                    android:contentDescription="Increase Font" />
 
-                <TextView
+                <ImageView
                     android:id="@+id/btn_refresh"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:background="@drawable/widget_button_background"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="4dp"
-                    android:minHeight="0dp"
-                    android:minWidth="0dp"
-                    android:includeFontPadding="false"
-                    android:textSize="12sp"
-                    android:text="Refresh"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_widget_refresh"
                     android:layout_marginStart="8dp"
-                    android:textColor="@android:color/black" />
+                    android:contentDescription="Refresh" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
