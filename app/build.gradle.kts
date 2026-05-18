@@ -14,7 +14,7 @@ android {
         applicationId = "name.xoid.datawidget"
         minSdk = 27
         targetSdk = 36
-        versionCode = 73
+        versionCode = 74
         versionName = "1.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

@@ -36,6 +36,11 @@ class SettingsFragment : Fragment() {
         val paddingPx = (currentPadding * resources.displayMetrics.density).toInt()
         binding.previewContentContainer.setPadding(paddingPx, paddingPx, paddingPx, paddingPx)
 
+        val currentFontSize = AppSettings.getWidgetFontSize(requireContext())
+        binding.seekFontSize.progress = currentFontSize
+        binding.txtFontValue.text = "${currentFontSize}sp"
+        binding.previewText.textSize = currentFontSize.toFloat()
+
         binding.seekRadius.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val steps = intArrayOf(0, 8, 16, 24, 32)
@@ -71,6 +76,21 @@ class SettingsFragment : Fragment() {
 
                 if (fromUser) {
                     AppSettings.saveWidgetPadding(requireContext(), progress)
+                    triggerWidgetUpdate()
+                }
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        binding.seekFontSize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val fontSize = progress.coerceAtLeast(6)
+                binding.txtFontValue.text = "${fontSize}sp"
+                binding.previewText.textSize = fontSize.toFloat()
+
+                if (fromUser) {
+                    AppSettings.saveWidgetFontSize(requireContext(), fontSize)
                     triggerWidgetUpdate()
                 }
             }

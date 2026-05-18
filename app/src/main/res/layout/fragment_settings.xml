@@ -50,6 +50,7 @@
                 android:orientation="vertical"
                 android:padding="8dp">
                 <TextView
+                    android:id="@+id/preview_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Sample Data"
@@ -112,6 +113,34 @@
         android:layout_height="wrap_content"
         android:max="24"
         android:progress="4"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Base Font Size"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+        <TextView
+            android:id="@+id/txt_font_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <SeekBar
+        android:id="@+id/seek_font_size"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="30"
+        android:progress="12"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="8dp" />
 

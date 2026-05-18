@@ -7,6 +7,7 @@ object AppSettings {
     private const val PREFS_NAME = "AppSettings"
     private const val KEY_WIDGET_RADIUS = "widget_radius"
     private const val KEY_WIDGET_PADDING = "widget_padding"
+    private const val KEY_WIDGET_FONT_SIZE = "widget_font_size"
 
     fun saveWidgetRadius(context: Context, radiusDp: Int) {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit {
@@ -28,5 +29,16 @@ object AppSettings {
     fun getWidgetPadding(context: Context): Int {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             .getInt(KEY_WIDGET_PADDING, AppConfig.DEFAULT_WIDGET_PADDING)
+    }
+
+    fun saveWidgetFontSize(context: Context, fontSizeSp: Int) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit {
+            putInt(KEY_WIDGET_FONT_SIZE, fontSizeSp)
+        }
+    }
+
+    fun getWidgetFontSize(context: Context): Int {
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getInt(KEY_WIDGET_FONT_SIZE, AppConfig.DEFAULT_WIDGET_FONT_SIZE)
     }
 }

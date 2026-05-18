@@ -7,4 +7,5 @@ object AppConfig {
     const val DEFAULT_BG_ALPHA = 0.5f
     const val DEFAULT_WIDGET_RADIUS = 8
     const val DEFAULT_WIDGET_PADDING = 4
+    const val DEFAULT_WIDGET_FONT_SIZE = 12
 }
