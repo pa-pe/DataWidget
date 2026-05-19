@@ -18,6 +18,7 @@ import android.content.Intent
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import name.xoid.datawidget.databinding.LayoutConfigFormBinding
+import androidx.core.graphics.toColorInt
 
 class ConfigListFragment : Fragment() {
 
@@ -80,10 +81,10 @@ class ConfigListFragment : Fragment() {
             
             val count = usageCounts[config.id] ?: 0
             if (count > 0) {
-                itemBinding.configStatus.text = "Pinned widgets: $count"
-                itemBinding.configStatus.setTextColor(android.graphics.Color.parseColor("#4CAF50")) // Nice green
+                itemBinding.configStatus.text = context.getString(R.string.status_pinned_count, count)
+                itemBinding.configStatus.setTextColor("#4CAF50".toColorInt()) // Nice green
             } else {
-                itemBinding.configStatus.text = "Not pinned"
+                itemBinding.configStatus.text = context.getString(R.string.status_not_pinned)
                 itemBinding.configStatus.setTextColor(android.graphics.Color.GRAY)
             }
             
@@ -102,32 +103,36 @@ class ConfigListFragment : Fragment() {
             .setView(dialogBinding.root)
             .create()
 
+        dialogBinding.btnEdit.text = getString(R.string.btn_edit)
         dialogBinding.btnEdit.setOnClickListener {
             dialog.dismiss()
             showEditDialog(config)
         }
 
+        dialogBinding.btnTest.text = getString(R.string.btn_test)
         dialogBinding.btnTest.setOnClickListener {
             dialog.dismiss()
             runTest(config)
         }
 
+        dialogBinding.btnPin.text = getString(R.string.btn_pin_to_home)
         dialogBinding.btnPin.setOnClickListener {
             dialog.dismiss()
             pinWidget(config)
         }
 
+        dialogBinding.btnDelete.text = getString(R.string.btn_delete_from_library)
         dialogBinding.btnDelete.setOnClickListener {
             dialog.dismiss()
             AlertDialog.Builder(requireContext())
-                .setTitle("Delete Configuration")
-                .setMessage("Are you sure you want to remove this from your library?")
-                .setPositiveButton("Delete") { _, _ ->
+                .setTitle(R.string.dialog_delete_title)
+                .setMessage(R.string.dialog_delete_message)
+                .setPositiveButton(R.string.btn_delete) { _, _ ->
                     configs.remove(config)
                     ConfigManager.saveConfigs(requireContext(), configs)
                     refreshList()
                 }
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.btn_cancel, null)
                 .show()
         }
 
@@ -139,17 +144,17 @@ class ConfigListFragment : Fragment() {
         val helper = ConfigUiHelper(requireContext(), layoutInflater, editBinding)
         helper.setup(config)
 
-        // Use internal title
-        editBinding.txtTitle.visibility = View.VISIBLE
-        editBinding.txtTitle.text = "Edit Configuration"
+        // Hide the internal title and save button because we'll use the Dialog's UI
+        editBinding.txtTitle.visibility = View.GONE
         editBinding.btnSave.visibility = View.GONE
 
         val dialog = AlertDialog.Builder(requireContext())
+            .setTitle(R.string.title_edit_config)
             .setView(editBinding.root)
-            .setPositiveButton("Save", null)
-            .setNegativeButton("Cancel", null)
+            .setPositiveButton(R.string.btn_save, null) // Set to null to handle manually for validation
+            .setNegativeButton(R.string.btn_cancel, null)
             .create()
-
+        
         dialog.setOnShowListener {
             val saveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             saveButton.setOnClickListener {
@@ -177,12 +182,12 @@ class ConfigListFragment : Fragment() {
         
         // Make the dialog wider (95% of screen width)
         val width = (resources.displayMetrics.widthPixels * 0.95).toInt()
-        dialog.window?.setLayout(width, android.view.ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     private fun runTest(config: WidgetConfig) {
         val progressDialog = AlertDialog.Builder(requireContext())
-            .setMessage("Testing connection...")
+            .setMessage(R.string.dialog_testing_message)
             .setCancelable(false)
             .create()
         progressDialog.show()
@@ -199,11 +204,11 @@ class ConfigListFragment : Fragment() {
                 connection.connectTimeout = 5000
                 connection.readTimeout = 5000
                 val text = connection.inputStream.bufferedReader().use { it.readText() }
-                results.add("✅ Connection: Success")
+                results.add(getString(R.string.test_conn_success))
                 text
             } catch (e: Exception) {
                 success = false
-                results.add("❌ Connection: Failed (${e.message})")
+                results.add(getString(R.string.test_conn_failed, e.message ?: ""))
                 null
             }
 
@@ -211,38 +216,38 @@ class ConfigListFragment : Fragment() {
             if (content != null) {
                 try {
                     val json = JSONObject(content)
-                    results.add("✅ Parse JSON: Success")
+                    results.add(getString(R.string.test_json_success))
                     
                     val errors = mutableListOf<String>()
                     
                     if (!json.has("update_interval_sec") && !json.has("next_update_at")) {
-                        errors.add("- Missing update parameters")
+                        errors.add(getString(R.string.test_err_params))
                     }
                     
                     val rows = json.optJSONArray("rows")
                     if (rows == null || rows.length() == 0) {
-                        errors.add("- No rows found")
+                        errors.add(getString(R.string.test_err_rows))
                     }
                     
                     if (errors.isEmpty()) {
-                        results.add("✅ Validation: Success")
+                        results.add(getString(R.string.test_val_success))
                     } else {
                         success = false
-                        results.add("❌ Validation: Failed")
+                        results.add(getString(R.string.test_val_failed))
                         results.addAll(errors)
                     }
                 } catch (e: Exception) {
                     success = false
-                    results.add("❌ Parse JSON: Failed (${e.message})")
+                    results.add(getString(R.string.test_json_failed, e.message ?: ""))
                 }
             }
 
             activity?.runOnUiThread {
                 progressDialog.dismiss()
                 AlertDialog.Builder(requireContext())
-                    .setTitle(if (success) "Test Passed" else "Test Failed")
+                    .setTitle(if (success) R.string.test_passed else R.string.test_failed)
                     .setMessage(results.joinToString("\n"))
-                    .setPositiveButton("OK", null)
+                    .setPositiveButton(R.string.btn_ok, null)
                     .show()
             }
         }
@@ -268,7 +273,7 @@ class ConfigListFragment : Fragment() {
             // 3. Request pin with callback
             appWidgetManager.requestPinAppWidget(componentName, null, successCallback)
         } else {
-            Toast.makeText(requireContext(), "Your launcher does not support direct pinning", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.toast_no_pin_support, Toast.LENGTH_SHORT).show()
         }
     }
 

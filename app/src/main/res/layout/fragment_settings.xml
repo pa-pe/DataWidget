@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Global Widget Settings"
+        android:text="@string/global_settings_title"
         android:textSize="20sp"
         android:textStyle="bold"
         android:layout_marginBottom="24dp" />
@@ -17,7 +17,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Preview"
+        android:text="@string/preview_label"
         android:textSize="12sp"
         android:textAllCaps="true"
         android:textColor="@android:color/darker_gray"
@@ -53,7 +53,7 @@
                     android:id="@+id/preview_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sample Data"
+                    android:text="@string/sample_data"
                     android:textSize="12sp"
                     android:textColor="#888888" />
             </LinearLayout>
@@ -68,7 +68,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Widget Corner Radius"
+            android:text="@string/widget_radius_label"
             android:textStyle="bold"
             android:textSize="16sp" />
         <TextView
@@ -96,7 +96,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Content Padding"
+            android:text="@string/content_padding_label"
             android:textStyle="bold"
             android:textSize="16sp" />
         <TextView
@@ -124,7 +124,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Base Font Size"
+            android:text="@string/base_font_size_label"
             android:textStyle="bold"
             android:textSize="16sp" />
         <TextView
@@ -147,7 +147,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="This setting affects all widgets on your home screen. Note: On older Android versions, changes might require a manual refresh."
+        android:text="@string/global_settings_note"
         android:textSize="12sp"
         android:textColor="@android:color/darker_gray" />
 

@@ -14,6 +14,7 @@ import android.content.Intent
 import name.xoid.datawidget.databinding.ActivityMainBinding
 import name.xoid.datawidget.databinding.LayoutConfigFormBinding
 import androidx.appcompat.app.AlertDialog
+import android.view.ViewGroup
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,17 +46,17 @@ class MainActivity : AppCompatActivity() {
             val helper = ConfigUiHelper(this, layoutInflater, editBinding)
             
             // Default values for a new config
-            val newConfig = WidgetConfig("New Config", "")
+            val newConfig = WidgetConfig(getString(R.string.error_unnamed), "")
             helper.setup(newConfig)
             
-            editBinding.txtTitle.visibility = android.view.View.VISIBLE
-            editBinding.txtTitle.text = "Add New Configuration"
+            editBinding.txtTitle.visibility = android.view.View.GONE
             editBinding.btnSave.visibility = android.view.View.GONE
 
             val dialog = AlertDialog.Builder(this)
+                .setTitle(R.string.title_add_config)
                 .setView(editBinding.root)
-                .setPositiveButton("Add", null)
-                .setNegativeButton("Cancel", null)
+                .setPositiveButton(R.string.btn_add, null)
+                .setNegativeButton(R.string.btn_cancel, null)
                 .create()
 
             dialog.setOnShowListener {
@@ -66,7 +67,7 @@ class MainActivity : AppCompatActivity() {
                         val url = editBinding.editUrl.text.toString().trim()
                         
                         val config = WidgetConfig(
-                            name, 
+                            name.ifEmpty { getString(R.string.error_unnamed) }, 
                             url, 
                             String.format("#%06X", (0xFFFFFF and helper.selectedColor)),
                             helper.selectedAlpha,
@@ -90,7 +91,7 @@ class MainActivity : AppCompatActivity() {
             
             // Make the dialog wider (95% of screen width)
             val width = (resources.displayMetrics.widthPixels * 0.95).toInt()
-            dialog.window?.setLayout(width, android.view.ViewGroup.LayoutParams.WRAP_CONTENT)
+            dialog.window?.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
         }
     }
 

@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:src="@drawable/widget_bg_r16"
         android:scaleType="fitXY"
-        android:contentDescription="Background" />
+        android:contentDescription="@string/content_desc_bg" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -71,7 +71,7 @@
                     android:background="@drawable/widget_button_background"
                     android:padding="6dp"
                     android:src="@drawable/ic_widget_settings"
-                    android:contentDescription="Setup" />
+                    android:contentDescription="@string/content_desc_setup" />
 
                 <ImageView
                     android:id="@+id/btn_font_dec"
@@ -81,7 +81,7 @@
                     android:padding="6dp"
                     android:src="@drawable/ic_widget_remove"
                     android:layout_marginStart="8dp"
-                    android:contentDescription="Decrease Font" />
+                    android:contentDescription="@string/content_desc_font_dec" />
 
                 <ImageView
                     android:id="@+id/btn_font_inc"
@@ -91,7 +91,7 @@
                     android:padding="6dp"
                     android:src="@drawable/ic_widget_add"
                     android:layout_marginStart="8dp"
-                    android:contentDescription="Increase Font" />
+                    android:contentDescription="@string/content_desc_font_inc" />
 
                 <ImageView
                     android:id="@+id/btn_refresh"
@@ -101,7 +101,7 @@
                     android:padding="6dp"
                     android:src="@drawable/ic_widget_refresh"
                     android:layout_marginStart="8dp"
-                    android:contentDescription="Refresh" />
+                    android:contentDescription="@string/content_desc_refresh" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

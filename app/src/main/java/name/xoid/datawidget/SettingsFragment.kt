@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import name.xoid.datawidget.databinding.FragmentSettingsBinding
+import kotlin.math.abs
 
 class SettingsFragment : Fragment() {
     private var _binding: FragmentSettingsBinding? = null
@@ -27,26 +28,27 @@ class SettingsFragment : Fragment() {
 
         val currentRadius = AppSettings.getWidgetRadius(requireContext())
         binding.seekRadius.progress = currentRadius
-        binding.txtRadiusValue.text = "${currentRadius}dp"
+        binding.txtRadiusValue.text = getString(R.string.dp_unit, currentRadius)
         binding.cardPreview.radius = currentRadius * resources.displayMetrics.density
 
         val currentPadding = AppSettings.getWidgetPadding(requireContext())
         binding.seekPadding.progress = currentPadding
-        binding.txtPaddingValue.text = "${currentPadding}dp"
+        binding.txtPaddingValue.text = getString(R.string.dp_unit, currentPadding)
         val paddingPx = (currentPadding * resources.displayMetrics.density).toInt()
         binding.previewContentContainer.setPadding(paddingPx, paddingPx, paddingPx, paddingPx)
 
         val currentFontSize = AppSettings.getWidgetFontSize(requireContext())
         binding.seekFontSize.progress = currentFontSize
-        binding.txtFontValue.text = "${currentFontSize}sp"
+        binding.txtFontValue.text = getString(R.string.sp_unit, currentFontSize)
         binding.previewText.textSize = currentFontSize.toFloat()
 
         binding.seekRadius.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                // Magnetic snapping to our predefined steps: 0, 8, 16, 24, 32
                 val steps = intArrayOf(0, 8, 16, 24, 32)
-                val snapped = steps.minByOrNull { Math.abs(it - progress) } ?: progress
+                val snapped = steps.minByOrNull { abs(it - progress) } ?: progress
                 
-                binding.txtRadiusValue.text = "${snapped}dp"
+                binding.txtRadiusValue.text = getString(R.string.dp_unit, snapped)
                 binding.cardPreview.radius = snapped * resources.displayMetrics.density
                 
                 // Update progress bar margin in preview as well
@@ -69,7 +71,7 @@ class SettingsFragment : Fragment() {
 
         binding.seekPadding.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                binding.txtPaddingValue.text = "${progress}dp"
+                binding.txtPaddingValue.text = getString(R.string.dp_unit, progress)
                 
                 val px = (progress * resources.displayMetrics.density).toInt()
                 binding.previewContentContainer.setPadding(px, px, px, px)
@@ -86,7 +88,7 @@ class SettingsFragment : Fragment() {
         binding.seekFontSize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val fontSize = progress.coerceAtLeast(6)
-                binding.txtFontValue.text = "${fontSize}sp"
+                binding.txtFontValue.text = getString(R.string.sp_unit, fontSize)
                 binding.previewText.textSize = fontSize.toFloat()
 
                 if (fromUser) {

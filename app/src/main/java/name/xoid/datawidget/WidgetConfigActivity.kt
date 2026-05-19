@@ -50,7 +50,7 @@ class WidgetConfigActivity : AppCompatActivity() {
         var currentProgVis = WidgetSettings.getProgressVisibility(this, appWidgetId)
         var currentReqType = WidgetSettings.getRequestType(this, appWidgetId)
         var currentFontSize = WidgetSettings.getFontSize(this, appWidgetId)
-        var currentName = WidgetSettings.getName(this, appWidgetId) ?: "Widget $appWidgetId"
+        var currentName = WidgetSettings.getName(this, appWidgetId) ?: (getString(R.string.app_name) + " $appWidgetId")
 
         // Check if we have data from PendingPinConfig (Bridge)
         val pending = PendingPinConfig.config
@@ -132,7 +132,7 @@ class WidgetConfigActivity : AppCompatActivity() {
                 setResult(RESULT_OK, resultValue)
                 finish()
             } catch (_: Exception) {
-                Toast.makeText(this, "Error saving settings", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.val_err_invalid_data, Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -92,7 +92,7 @@ class UpdateService : Service() {
             ACTION_FORCE_REFRESH -> {
                 if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
                     fetchData(appWidgetId)
-                    Toast.makeText(this, "Refreshing...", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.toast_refreshing, Toast.LENGTH_SHORT).show()
                 }
             }
             ACTION_FONT_SIZE_INC, ACTION_FONT_SIZE_DEC -> {
@@ -216,7 +216,7 @@ class UpdateService : Service() {
                 Log.e("UpdateService", "Error fetching/parsing data", e)
                 fetchError[appWidgetId] = true
                 
-                lastErrorMessage[appWidgetId] = if (e is org.json.JSONException) "JSON Error" else "Connection Problem"
+                lastErrorMessage[appWidgetId] = if (e is org.json.JSONException) getString(R.string.error_json) else getString(R.string.error_connection)
 
                 // On error, schedule next fetch in 1 minute as requested
                 nextFetchTime[appWidgetId] = System.currentTimeMillis() + 60000
@@ -268,7 +268,7 @@ class UpdateService : Service() {
 
         try {
             val jsonString = cachedData[appWidgetId]
-                ?: throw Exception("Waiting for data from GitHub...")
+                ?: throw Exception(getString(R.string.msg_waiting_data))
             val jsonObject = JSONObject(jsonString)
 
             // Resolve linked config from library
@@ -297,7 +297,7 @@ class UpdateService : Service() {
             val hasError = fetchError[appWidgetId] ?: false
             if (hasError) {
                 root.setViewVisibility(R.id.txt_error, View.VISIBLE)
-                root.setTextViewText(R.id.txt_error, "⚠ ${lastErrorMessage[appWidgetId]}")
+                root.setTextViewText(R.id.txt_error, getString(R.string.label_data_error, lastErrorMessage[appWidgetId]))
                 root.setProgressBar(R.id.fetch_progress, 1000, 1000, false)
             } else {
                 root.setViewVisibility(R.id.txt_error, View.GONE)
@@ -316,13 +316,7 @@ class UpdateService : Service() {
 
             val rowsArray = jsonObject.getJSONArray("rows")
             val baseFontSizeFromSource = libraryConfig?.baseFontSize ?: WidgetSettings.getFontSize(context, appWidgetId)
-            
-            // Priority: Per-widget setting (if not default) > Global setting
-            val baseFontSize = if (baseFontSizeFromSource != AppConfig.DEFAULT_WIDGET_FONT_SIZE) {
-                baseFontSizeFromSource 
-            } else {
-                AppSettings.getWidgetFontSize(context)
-            }
+            val baseFontSize = if (baseFontSizeFromSource != AppConfig.DEFAULT_WIDGET_FONT_SIZE) baseFontSizeFromSource else AppSettings.getWidgetFontSize(context)
 
             val currentTimeSeconds = System.currentTimeMillis() / 1000
 
@@ -368,7 +362,7 @@ class UpdateService : Service() {
                         RemoteViews(context.packageName, R.layout.widget_col_12)
                     }
 
-                    // Apply font size
+                    // Apply calculated base font size
                     cellView.setTextViewTextSize(R.id.item_text, android.util.TypedValue.COMPLEX_UNIT_SP, baseFontSize.toFloat())
 
                     if (colJson.optString("type") == "countdown") {
@@ -416,7 +410,7 @@ class UpdateService : Service() {
             root.removeAllViews(R.id.widget_container)
             
             val errorView = RemoteViews(context.packageName, R.layout.widget_col_12)
-            errorView.setTextViewText(R.id.item_text, "❌ Layout Error: ${e.message}")
+            errorView.setTextViewText(R.id.item_text, getString(R.string.label_layout_error, e.message ?: ""))
             errorView.setTextColor(R.id.item_text, Color.RED)
             root.addView(R.id.widget_container, errorView)
         }
@@ -505,8 +499,8 @@ class UpdateService : Service() {
 
     private fun createNotification(): Notification {
         return Notification.Builder(this, CHANNEL_ID)
-            .setContentTitle("DataWidget is running")
-            .setContentText("Updating widgets...")
+            .setContentTitle(getString(R.string.notif_title))
+            .setContentText(getString(R.string.notif_content))
             .setSmallIcon(R.drawable.ic_launcher_foreground) // Use default icon
             .build()
     }
@@ -514,7 +508,7 @@ class UpdateService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         timer?.cancel()
-        updateAllWidgetsWithStatus("Update service stopped.")
+        updateAllWidgetsWithStatus(getString(R.string.notif_stopped))
     }
 
     private fun updateAllWidgetsWithStatus(status: String) {

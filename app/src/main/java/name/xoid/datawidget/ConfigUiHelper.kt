@@ -12,6 +12,7 @@ import androidx.core.widget.doAfterTextChanged
 import android.util.Patterns
 import name.xoid.datawidget.databinding.LayoutConfigFormBinding
 import name.xoid.datawidget.databinding.DialogColorPickerBinding
+import androidx.core.graphics.toColorInt
 
 class ConfigUiHelper(
     private val context: Context,
@@ -143,15 +144,15 @@ class ConfigUiHelper(
         var valid = true
         
         if (name.isEmpty()) {
-            binding.editName.error = "Name is required"
+            binding.editName.error = context.getString(R.string.val_err_name_required)
             valid = false
         }
         
         if (url.isEmpty()) {
-            binding.editUrl.error = "URL is required"
+            binding.editUrl.error = context.getString(R.string.val_err_url_required)
             valid = false
         } else if (!Patterns.WEB_URL.matcher(url).matches()) {
-            binding.editUrl.error = "Invalid URL format"
+            binding.editUrl.error = context.getString(R.string.val_err_invalid_url)
             valid = false
         }
         
@@ -163,7 +164,7 @@ class ConfigUiHelper(
         val names = allConfigs.map { it.name }.toTypedArray()
 
         androidx.appcompat.app.AlertDialog.Builder(context)
-            .setTitle("Select Example Template")
+            .setTitle(R.string.dialog_select_example_title)
             .setItems(names) { _, which ->
                 val selected = allConfigs[which]
                 binding.editName.setText(selected.name)
@@ -188,8 +189,9 @@ class ConfigUiHelper(
                 // Clear any error messages when an example is picked
                 binding.editName.error = null
                 binding.editUrl.error = null
+                updateLivePreview()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(R.string.btn_cancel, null)
             .show()
     }
 
@@ -197,15 +199,15 @@ class ConfigUiHelper(
         val colors = intArrayOf(
             Color.WHITE, Color.BLACK, Color.LTGRAY, Color.DKGRAY,
             Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW,
-            Color.CYAN, Color.MAGENTA, 
-            Color.parseColor("#1A237E"), Color.parseColor("#008000"),
-            Color.parseColor("#9ACD32"), Color.parseColor("#FFA500"), 
-            Color.parseColor("#FFC0CB"), Color.parseColor("#87CEEB")
+            Color.CYAN, Color.MAGENTA,
+            "#1A237E".toColorInt(), "#008000".toColorInt(),
+            "#9ACD32".toColorInt(), "#FFA500".toColorInt(),
+            "#FFC0CB".toColorInt(), "#87CEEB".toColorInt()
         )
 
         val gridBinding = DialogColorPickerBinding.inflate(layoutInflater)
         val dialog = androidx.appcompat.app.AlertDialog.Builder(context)
-            .setTitle("Select Color")
+            .setTitle(R.string.dialog_color_picker_title)
             .setView(gridBinding.root)
             .create()
 

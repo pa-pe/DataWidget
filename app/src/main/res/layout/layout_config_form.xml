@@ -16,7 +16,7 @@
             android:id="@+id/txt_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Configure Widget"
+            android:text="@string/configure_widget"
             android:textSize="20sp"
             android:textStyle="bold"
             android:gravity="center"
@@ -34,7 +34,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="GENERAL"
+                android:text="@string/section_general"
                 android:textSize="11sp"
                 android:textStyle="bold"
                 android:textColor="?android:attr/colorPrimary"
@@ -44,7 +44,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Configuration Name"
+                android:text="@string/config_name_label"
                 android:textStyle="bold"
                 android:textSize="14sp" />
 
@@ -52,7 +52,7 @@
                 android:id="@+id/edit_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="e.g. My Dashboard"
+                android:hint="@string/config_name_hint"
                 android:inputType="textCapWords"
                 android:layout_marginBottom="8dp" />
 
@@ -60,7 +60,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="DATA SOURCE"
+                android:text="@string/section_data_source"
                 android:textSize="11sp"
                 android:textStyle="bold"
                 android:textColor="?android:attr/colorPrimary"
@@ -70,7 +70,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Data URL"
+                android:text="@string/data_url_label"
                 android:textStyle="bold"
                 android:textSize="14sp" />
 
@@ -78,7 +78,7 @@
                 android:id="@+id/edit_url"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="https://example.com/data.json"
+                android:hint="@string/data_url_hint"
                 android:inputType="textMultiLine|textUri"
                 android:textSize="13sp" />
 
@@ -87,14 +87,14 @@
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Select from Examples..."
+                android:text="@string/btn_select_examples"
                 android:layout_gravity="end"
                 android:layout_marginTop="-4dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Request Type"
+                android:text="@string/request_type_label"
                 android:textStyle="bold"
                 android:textSize="14sp" />
 
@@ -108,12 +108,12 @@
                     android:id="@+id/radio_get"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="GET" />
+                    android:text="@string/request_type_get" />
                 <RadioButton
                     android:id="@+id/radio_post"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="POST"
+                    android:text="@string/request_type_post"
                     android:layout_marginStart="16dp" />
             </RadioGroup>
 
@@ -121,7 +121,7 @@
                 android:id="@+id/check_screen_on"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Update only when screen is on"
+                android:text="@string/update_screen_on_only"
                 android:textSize="14sp"
                 android:layout_marginBottom="8dp" />
 
@@ -129,7 +129,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="APPEARANCE"
+                android:text="@string/section_appearance"
                 android:textSize="11sp"
                 android:textStyle="bold"
                 android:textColor="?android:attr/colorPrimary"
@@ -159,7 +159,7 @@
                         android:id="@+id/preview_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Sample Data Preview"
+                        android:text="@string/sample_data_preview"
                         android:layout_marginTop="4dp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -172,7 +172,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Base Font Size"
+                    android:text="@string/base_font_size_label"
                     android:textStyle="bold"
                     android:textSize="14sp" />
                 <TextView
@@ -194,7 +194,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Background Color"
+                android:text="@string/background_color_label"
                 android:textStyle="bold"
                 android:textSize="14sp" />
 
@@ -231,7 +231,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Transparency"
+                    android:text="@string/transparency_label"
                     android:textStyle="bold"
                     android:textSize="14sp" />
                 <TextView
@@ -253,7 +253,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Progress Bar"
+                android:text="@string/progress_bar_label"
                 android:textStyle="bold"
                 android:textSize="14sp" />
 
@@ -267,12 +267,12 @@
                     android:id="@+id/radio_always"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Always" />
+                    android:text="@string/progress_vis_always" />
                 <RadioButton
                     android:id="@+id/radio_on_tap"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="On Tap"
+                    android:text="@string/progress_vis_on_tap"
                     android:layout_marginStart="16dp" />
             </RadioGroup>
 
@@ -280,7 +280,7 @@
                 android:id="@+id/btn_save"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Save and Update"
+                android:text="@string/btn_save_and_update"
                 android:padding="12dp" />
         </LinearLayout>
     </LinearLayout>

@@ -48,9 +48,6 @@ class DataWidgetProvider : AppWidgetProvider() {
         for (appWidgetId in appWidgetIds) {
             val views = RemoteViews(context.packageName, R.layout.widget_main)
             
-            // Apply background from settings
-            views.setInt(R.id.widget_bg_image, "setImageResource", bgResId)
-            
             // Setup minimal click handling even in Initializing state
             val toggleIntent = Intent(context, UpdateService::class.java).apply {
                 action = UpdateService.ACTION_TOGGLE_CONTROLS
@@ -63,8 +60,11 @@ class DataWidgetProvider : AppWidgetProvider() {
             views.setOnClickPendingIntent(R.id.widget_root, togglePendingIntent)
 
             // Apply background from settings
+            views.setInt(R.id.widget_bg_image, "setImageResource", bgResId)
+            
             val bgColor = WidgetSettings.getBgColor(context, appWidgetId)
             val bgAlpha = WidgetSettings.getBgAlpha(context, appWidgetId)
+            
             val pureColor = Color.rgb(Color.red(bgColor), Color.green(bgColor), Color.blue(bgColor))
             views.setInt(R.id.widget_bg_image, "setColorFilter", pureColor)
             
@@ -73,7 +73,7 @@ class DataWidgetProvider : AppWidgetProvider() {
 
             views.removeAllViews(R.id.widget_container)
             val loadingView = RemoteViews(context.packageName, R.layout.widget_col_12)
-            loadingView.setTextViewText(R.id.item_text, "Initializing...")
+            loadingView.setTextViewText(R.id.item_text, context.getString(R.string.msg_initializing))
             views.addView(R.id.widget_container, loadingView)
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }
