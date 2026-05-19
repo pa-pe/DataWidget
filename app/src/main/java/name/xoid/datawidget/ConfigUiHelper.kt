@@ -1,18 +1,17 @@
 package name.xoid.datawidget
 
-import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.SeekBar
-import androidx.core.widget.doAfterTextChanged
-import android.util.Patterns
-import name.xoid.datawidget.databinding.LayoutConfigFormBinding
-import name.xoid.datawidget.databinding.DialogColorPickerBinding
 import androidx.core.graphics.toColorInt
+import androidx.core.widget.doAfterTextChanged
+import name.xoid.datawidget.databinding.DialogColorPickerBinding
+import name.xoid.datawidget.databinding.LayoutConfigFormBinding
 
 class ConfigUiHelper(
     private val context: Context,
@@ -34,10 +33,10 @@ class ConfigUiHelper(
         updateColorPreview(selectedColor)
         
         binding.seekAlpha.progress = (selectedAlpha * 100).toInt()
-        binding.txtAlphaPercent.text = "${binding.seekAlpha.progress}%"
+        binding.txtAlphaPercent.text = context.getString(R.string.percent_unit, binding.seekAlpha.progress)
 
         binding.seekFontSize.progress = selectedFontSize
-        binding.txtFontSize.text = "${selectedFontSize}sp"
+        binding.txtFontSize.text = context.getString(R.string.sp_unit, selectedFontSize)
 
         // Initial preview update
         updateLivePreview()
@@ -66,7 +65,7 @@ class ConfigUiHelper(
         binding.seekAlpha.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 selectedAlpha = progress / 100f
-                binding.txtAlphaPercent.text = "$progress%"
+                binding.txtAlphaPercent.text = context.getString(R.string.percent_unit, progress)
                 updateLivePreview()
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -77,7 +76,7 @@ class ConfigUiHelper(
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val valToSet = progress.coerceAtLeast(6)
                 selectedFontSize = valToSet
-                binding.txtFontSize.text = "${valToSet}sp"
+                binding.txtFontSize.text = context.getString(R.string.sp_unit, valToSet)
                 updateLivePreview()
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -176,11 +175,11 @@ class ConfigUiHelper(
                 
                 selectedAlpha = selected.bgAlpha
                 binding.seekAlpha.progress = (selectedAlpha * 100).toInt()
-                binding.txtAlphaPercent.text = "${binding.seekAlpha.progress}%"
+                binding.txtAlphaPercent.text = context.getString(R.string.percent_unit, (selectedAlpha * 100).toInt())
                 
                 selectedFontSize = selected.baseFontSize
                 binding.seekFontSize.progress = selectedFontSize
-                binding.txtFontSize.text = "${selectedFontSize}sp"
+                binding.txtFontSize.text = context.getString(R.string.sp_unit, selectedFontSize)
                 
                 if (selected.requestType == "POST") binding.radioPost.isChecked = true else binding.radioGet.isChecked = true
                 binding.checkScreenOn.isChecked = selected.updateOnlyScreenOn
