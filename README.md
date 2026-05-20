@@ -39,7 +39,7 @@ A row is a horizontal container for columns.
 |:-------------------|:--------|:-------------------------------------------------------------------------------------------------------|
 | `type`             | String  | Type of cell: `text` (default), `countdown`, or `v-separator`.                                         |
 | `text`             | String  | Text to display (used for `text` type).                                                                |
-| `weight`           | String  | Bootstrap-like width: `"12"` (full), `"6"` (half), `"4"` (1/3), etc.                                   |
+| `weight`           | String  | Width: `"auto"` (default), `"12"` (full), `"6"` (half), `"4"` (1/3), etc.                              |
 | `color`            | String  | Text or separator color. Supports HEX (`#RRGGBB`, `#RGB`) or web names (e.g., `green`, `yellowgreen`). |
 | `size`             | String  | Text size in `sp`. Supports absolute values (`"14"`) or relative offsets (`"+2"`, `"-1"`).             |
 | `bold`             | Boolean | (Optional) Set to `true` for bold text.                                                                |

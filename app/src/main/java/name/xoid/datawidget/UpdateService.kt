@@ -358,14 +358,15 @@ class UpdateService : Service() {
                         continue
                     }
 
-                    val weight = colJson.optString("weight", "12")
+                    val weight = colJson.optString("weight", "auto")
                     val layoutName = "widget_col_$weight"
                     val layoutId = context.resources.getIdentifier(layoutName, "layout", context.packageName)
 
                     val cellView = if (layoutId != 0) {
                         RemoteViews(context.packageName, layoutId)
                     } else {
-                        RemoteViews(context.packageName, R.layout.widget_col_12)
+                        // Fallback if specific layout not found
+                        RemoteViews(context.packageName, R.layout.widget_col_auto)
                     }
 
                     // Calculate individual font size (absolute or relative)
