@@ -57,16 +57,21 @@ A row is a horizontal container for columns.
   "rows": [
     {
       "cols": [
-        { "text": "Status:", "weight": "4", "align": "left" },
-        { "type": "v-separator", "color": "gray" },
-        { "text": "ACTIVE", "weight": "8", "color": "green", "align": "right" }
+        { "text": "SYSTEM STATUS", "weight": "12", "align": "center", "bold": true, "size": "+2" }
       ]
     },
-    { "type": "h-separator", "color": "#444444" },
+    { "type": "h-separator", "color": "#444" },
+    {
+      "cols": [
+        { "text": "CPU Load", "weight": "6", "size": "-1" },
+        { "type": "v-separator" },
+        { "text": "24%", "weight": "6", "color": "green", "bold": true, "align": "right" }
+      ]
+    },
     {
       "cols": [
         { "text": "New Year in:", "weight": "6" },
-        { "type": "countdown", "target_timestamp": 1893456000, "weight": "6", "color": "red" }
+        { "type": "countdown", "target_timestamp": 1893456000, "weight": "6", "color": "red", "align": "right", "size": "16" }
       ]
     }
   ]
