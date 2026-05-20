@@ -1,0 +1,36 @@
+{
+  "update_interval_sec": 3600,
+  "rows": [
+    {
+      "cols": [
+        { "text": "Text Styling Demo", "weight": "12", "align": "center", "bold": true, "size": "16" }
+      ]
+    },
+    { "type": "h-separator", "color": "#CCCCCC" },
+    {
+      "cols": [
+        { "text": "Bold Text", "weight": "6", "bold": true },
+        { "text": "Italic Text", "weight": "6", "italic": true, "align": "right" }
+      ]
+    },
+    {
+      "cols": [
+        { "text": "Underlined", "weight": "6", "underline": true },
+        { "text": "Strikethrough", "weight": "6", "strike": true, "align": "right" }
+      ]
+    },
+    {
+      "cols": [
+        { "text": "Combined", "weight": "12", "align": "center", "bold": true, "italic": true, "underline": true, "color": "blue" }
+      ]
+    },
+    { "type": "h-separator", "color": "#CCCCCC" },
+    {
+      "cols": [
+        { "text": "Size +2", "weight": "4", "size": "+2" },
+        { "text": "Base Size", "weight": "4", "align": "center" },
+        { "text": "Size -2", "weight": "4", "size": "-2", "align": "right" }
+      ]
+    }
+  ]
+}

@@ -35,15 +35,19 @@ A row is a horizontal container for columns.
 
 ### Column/Cell Object
 
-| Property           | Type   | Description                                                                                            |
-|:-------------------|:-------|:-------------------------------------------------------------------------------------------------------|
-| `type`             | String | Type of cell: `text` (default), `countdown`, or `v-separator`.                                         |
-| `text`             | String | Text to display (used for `text` type).                                                                |
-| `weight`           | String | Bootstrap-like width: `"12"` (full), `"6"` (half), `"4"` (1/3), etc.                                   |
-| `color`            | String | Text or separator color. Supports HEX (`#RRGGBB`, `#RGB`) or web names (e.g., `green`, `yellowgreen`). |
-| `size`             | String | Text size in `sp`. Supports absolute values (`"14"`) or relative offsets (`"+2"`, `"-1"`).             |
-| `align`            | String | Text alignment: `left`, `center`, `right`.                                                             |
-| `target_timestamp` | Long   | Unix timestamp in seconds (Required for `countdown` type).                                             |
+| Property           | Type    | Description                                                                                            |
+|:-------------------|:--------|:-------------------------------------------------------------------------------------------------------|
+| `type`             | String  | Type of cell: `text` (default), `countdown`, or `v-separator`.                                         |
+| `text`             | String  | Text to display (used for `text` type).                                                                |
+| `weight`           | String  | Bootstrap-like width: `"12"` (full), `"6"` (half), `"4"` (1/3), etc.                                   |
+| `color`            | String  | Text or separator color. Supports HEX (`#RRGGBB`, `#RGB`) or web names (e.g., `green`, `yellowgreen`). |
+| `size`             | String  | Text size in `sp`. Supports absolute values (`"14"`) or relative offsets (`"+2"`, `"-1"`).             |
+| `bold`             | Boolean | (Optional) Set to `true` for bold text.                                                                |
+| `italic`           | Boolean | (Optional) Set to `true` for italic text.                                                              |
+| `underline`        | Boolean | (Optional) Set to `true` to underline text.                                                            |
+| `strike`           | Boolean | (Optional) Set to `true` for strikethrough text.                                                       |
+| `align`            | String  | Text alignment: `left`, `center`, `right`.                                                             |
+| `target_timestamp` | Long    | Unix timestamp in seconds (Required for `countdown` type).                                             |
 
 ## Example JSON
 

@@ -1,7 +1,5 @@
 {
   "update_interval_sec": 300,
-  "bg_color": "#212121",
-  "bg_alpha": 0.9,
   "rows": [
     {
       "cols": [

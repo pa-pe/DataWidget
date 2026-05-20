@@ -24,6 +24,12 @@ import android.widget.Toast
 import android.view.Gravity
 import android.os.PowerManager
 import android.content.Context
+import android.graphics.Typeface
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.StrikethroughSpan
+import android.text.style.StyleSpan
+import android.text.style.UnderlineSpan
 import kotlin.math.abs
 
 class UpdateService : Service() {
@@ -381,7 +387,7 @@ class UpdateService : Service() {
                     // Apply calculated font size
                     cellView.setTextViewTextSize(R.id.item_text, android.util.TypedValue.COMPLEX_UNIT_SP, individualFontSize.toFloat())
 
-                    if (colJson.optString("type") == "countdown") {
+                    val rawText = if (colJson.optString("type") == "countdown") {
                         val target = colJson.getLong("target_timestamp")
                         val diff = target - currentTimeSeconds
                         val absDiff = abs(diff)
@@ -399,10 +405,27 @@ class UpdateService : Service() {
                         } else {
                             String.format(Locale.US, "%02d:%02d", minutes, seconds)
                         }
-                        cellView.setTextViewText(R.id.item_text, "$prefix$timeText")
+                        "$prefix$timeText"
                     } else {
-                        cellView.setTextViewText(R.id.item_text, colJson.optString("text", ""))
+                        colJson.optString("text", "")
                     }
+
+                    // Apply styles
+                    val spannable = SpannableString(rawText)
+                    if (colJson.optBoolean("bold", false)) {
+                        spannable.setSpan(StyleSpan(Typeface.BOLD), 0, spannable.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    }
+                    if (colJson.optBoolean("italic", false)) {
+                        spannable.setSpan(StyleSpan(Typeface.ITALIC), 0, spannable.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    }
+                    if (colJson.optBoolean("underline", false)) {
+                        spannable.setSpan(UnderlineSpan(), 0, spannable.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    }
+                    if (colJson.optBoolean("strike", false)) {
+                        spannable.setSpan(StrikethroughSpan(), 0, spannable.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    }
+                    
+                    cellView.setTextViewText(R.id.item_text, spannable)
 
                     val colorStr = colJson.optString("color", "#000000")
                     cellView.setTextColor(R.id.item_text, ColorUtils.parseColor(colorStr))
