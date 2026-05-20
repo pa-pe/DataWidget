@@ -57,21 +57,7 @@ A row is a horizontal container for columns.
   "rows": [
     {
       "cols": [
-        { "text": "SYSTEM STATUS", "weight": "12", "align": "center", "bold": true, "size": "+2" }
-      ]
-    },
-    { "type": "h-separator", "color": "#444" },
-    {
-      "cols": [
-        { "text": "CPU Load", "weight": "6", "size": "-1" },
-        { "type": "v-separator" },
-        { "text": "24%", "weight": "6", "color": "green", "bold": true, "align": "right" }
-      ]
-    },
-    {
-      "cols": [
-        { "text": "New Year in:", "weight": "6" },
-        { "type": "countdown", "target_timestamp": 1893456000, "weight": "6", "color": "red", "align": "right", "size": "16" }
+        { "text": "Hello World!", "weight": "12", "align": "center" }
       ]
     }
   ]
@@ -85,6 +71,7 @@ You can find more JSON templates in the `/examples` directory of this repository
 - `separators_demo.json`: Showcases both vertical and horizontal separators with different colors.
 - `status_dashboard.json`: A system-style dashboard with multiple rows, custom alignment, and labels.
 - `crypto_prices.json`: Demonstrates a multi-column table with color-coded trends (green/red).
+- `style_demo.json`: Demonstrates text styling (bold, italic, etc.) and custom font sizes.
 
 ## Battery Optimization & Privacy
 
