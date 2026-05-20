@@ -5,7 +5,7 @@
   "rows": [
     {
       "cols": [
-        { "text": "SYSTEM STATUS", "weight": "12", "align": "center", "color": "#FFD700" }
+        { "text": "SYSTEM STATUS", "weight": "12", "align": "center", "color": "#673AB7" ,"size": "+2" }
       ]
     },
     { "type": "h-separator", "color": "#444" },

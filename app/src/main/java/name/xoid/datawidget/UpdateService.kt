@@ -362,8 +362,24 @@ class UpdateService : Service() {
                         RemoteViews(context.packageName, R.layout.widget_col_12)
                     }
 
-                    // Apply calculated base font size
-                    cellView.setTextViewTextSize(R.id.item_text, android.util.TypedValue.COMPLEX_UNIT_SP, baseFontSize.toFloat())
+                    // Calculate individual font size (absolute or relative)
+                    val sizeStr = colJson.optString("size", "")
+                    val individualFontSize = if (sizeStr.isNotEmpty()) {
+                        try {
+                            if (sizeStr.startsWith("+") || sizeStr.startsWith("-")) {
+                                (baseFontSize + sizeStr.toInt()).coerceAtLeast(4)
+                            } else {
+                                sizeStr.toInt().coerceAtLeast(4)
+                            }
+                        } catch (_: Exception) {
+                            baseFontSize
+                        }
+                    } else {
+                        baseFontSize
+                    }
+
+                    // Apply calculated font size
+                    cellView.setTextViewTextSize(R.id.item_text, android.util.TypedValue.COMPLEX_UNIT_SP, individualFontSize.toFloat())
 
                     if (colJson.optString("type") == "countdown") {
                         val target = colJson.getLong("target_timestamp")
