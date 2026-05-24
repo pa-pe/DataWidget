@@ -28,38 +28,44 @@
             android:progressBackgroundTint="#10000000"
             android:progressTint="#40000000" />
 
-        <LinearLayout
-            android:id="@+id/widget_container_inner"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:paddingHorizontal="8dp"
-            android:paddingBottom="8dp">
+            android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/txt_error"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="#FF0000"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                android:visibility="gone"
-                android:gravity="center"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp" />
-
+            <!-- Content Container -->
             <LinearLayout
-                android:id="@+id/widget_container"
+                android:id="@+id/widget_container_inner"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="vertical" />
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingHorizontal="8dp"
+                android:paddingBottom="8dp">
 
-            <!-- Controls Panel with semi-transparent background -->
+                <TextView
+                    android:id="@+id/txt_error"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FF0000"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    android:gravity="center"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp" />
+
+                <LinearLayout
+                    android:id="@+id/widget_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" />
+            </LinearLayout>
+
+            <!-- Overlay Controls Panel -->
             <LinearLayout
                 android:id="@+id/widget_controls_panel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
                 android:orientation="vertical"
                 android:background="@drawable/widget_panel_background"
                 android:padding="6dp"
@@ -120,7 +126,7 @@
                         android:contentDescription="@string/content_desc_refresh" />
                 </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
+        </FrameLayout>
     </LinearLayout>
 
 </FrameLayout>
