@@ -556,8 +556,9 @@ class UpdateService : Service() {
 
         // Control visibility
         val isVisible = controlsVisible[appWidgetId] ?: false
-        root.setViewVisibility(R.id.widget_controls, if (isVisible) View.VISIBLE else View.GONE)
-        root.setViewVisibility(R.id.widget_custom_buttons, if (isVisible && hasCustomButtons) View.VISIBLE else View.GONE)
+        root.setViewVisibility(R.id.widget_controls_panel, if (isVisible) View.VISIBLE else View.GONE)
+        root.setViewVisibility(R.id.widget_custom_buttons, if (hasCustomButtons) View.VISIBLE else View.GONE)
+        root.setViewVisibility(R.id.widget_controls, View.VISIBLE) // Visible inside panel
     }
 
     private fun createNotificationChannel() {
