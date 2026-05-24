@@ -293,6 +293,19 @@ class UpdateService : Service() {
             val alphaInt = (userBgAlpha * 255).toInt().coerceIn(0, 255)
             root.setInt(R.id.widget_bg_image, "setImageAlpha", alphaInt)
 
+            // Controls Panel with semi-transparent background from Global Settings
+            val panelColorHex = AppSettings.getPanelBgColor(context)
+            val panelColor = ColorUtils.parseColor(panelColorHex)
+            val panelAlpha = AppSettings.getPanelBgAlpha(context)
+            
+            val combinedPanelColor = Color.argb(
+                (panelAlpha * 255).toInt().coerceIn(0, 255),
+                Color.red(panelColor),
+                Color.green(panelColor),
+                Color.blue(panelColor)
+            )
+            root.setInt(R.id.widget_controls_panel, "setBackgroundColor", combinedPanelColor)
+
             // Update fetch progress bar visibility and value
             val progVis = libraryConfig?.progressVisibility ?: WidgetSettings.getProgressVisibility(context, appWidgetId)
             val isControlsVisible = controlsVisible[appWidgetId] ?: false
