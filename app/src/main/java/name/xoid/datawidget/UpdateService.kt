@@ -471,10 +471,13 @@ class UpdateService : Service() {
 
         // Handle custom buttons from JSON
         root.removeAllViews(R.id.widget_custom_buttons)
-        jsonObject?.optJSONArray("buttons")?.let { buttonsArray ->
-            for (i in 0 until buttonsArray.length()) {
+        val buttonsArray = jsonObject?.optJSONArray("buttons")
+        val hasCustomButtons = buttonsArray != null && buttonsArray.length() > 0
+
+        if (hasCustomButtons) {
+            for (i in 0 until (buttonsArray.length() ?: 0)) {
                 val btnJson = buttonsArray.getJSONObject(i)
-                val text = btnJson.optString("text", "Button")
+                val text = btnJson.optString("text", "")
                 val url = btnJson.optString("url", "")
                 val color = btnJson.optString("color", "#000000")
                 
@@ -554,7 +557,7 @@ class UpdateService : Service() {
         // Control visibility
         val isVisible = controlsVisible[appWidgetId] ?: false
         root.setViewVisibility(R.id.widget_controls, if (isVisible) View.VISIBLE else View.GONE)
-        root.setViewVisibility(R.id.widget_custom_buttons, if (isVisible) View.VISIBLE else View.GONE)
+        root.setViewVisibility(R.id.widget_custom_buttons, if (isVisible && hasCustomButtons) View.VISIBLE else View.GONE)
     }
 
     private fun createNotificationChannel() {
