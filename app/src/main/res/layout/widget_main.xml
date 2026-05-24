@@ -56,6 +56,15 @@
                 android:orientation="vertical" />
 
             <LinearLayout
+                android:id="@+id/widget_custom_buttons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:gravity="center"
+                android:paddingTop="4dp" />
+
+            <LinearLayout
                 android:id="@+id/widget_controls"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

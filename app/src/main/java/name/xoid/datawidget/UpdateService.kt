@@ -5,31 +5,32 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.appwidget.AppWidgetManager
-import android.content.Intent
-import android.os.IBinder
-import android.widget.RemoteViews
-import java.util.Timer
-import java.util.TimerTask
-import android.graphics.Color
-import org.json.JSONObject
-import android.util.Log
-import java.net.HttpURLConnection
-import java.net.URL
-import java.util.Locale
-import kotlin.concurrent.thread
-import android.content.pm.ServiceInfo
-import android.os.Build
-import android.view.View
-import android.widget.Toast
-import android.view.Gravity
-import android.os.PowerManager
 import android.content.Context
+import android.content.Intent
+import android.content.pm.ServiceInfo
+import android.graphics.Color
 import android.graphics.Typeface
+import android.os.Build
+import android.os.IBinder
+import android.os.PowerManager
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.StrikethroughSpan
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
+import android.util.Log
+import android.view.Gravity
+import android.view.View
+import android.widget.RemoteViews
+import android.widget.Toast
+import androidx.core.net.toUri
+import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.Locale
+import java.util.Timer
+import java.util.TimerTask
+import kotlin.concurrent.thread
 import kotlin.math.abs
 
 class UpdateService : Service() {
@@ -326,8 +327,8 @@ class UpdateService : Service() {
 
             val currentTimeSeconds = System.currentTimeMillis() / 1000
 
-            // Re-apply control setup (I moved it during the previous edit, putting it back)
-            setupControls(context, root, appWidgetId)
+            // Re-apply control setup
+            setupControls(context, root, appWidgetId, jsonObject)
 
             root.removeAllViews(R.id.widget_container)
 
@@ -458,7 +459,7 @@ class UpdateService : Service() {
         appWidgetManager.updateAppWidget(appWidgetId, root)
     }
 
-    private fun setupControls(context: Context, root: RemoteViews, appWidgetId: Int) {
+    private fun setupControls(context: Context, root: RemoteViews, appWidgetId: Int, jsonObject: JSONObject? = null) {
         val appWidgetManager = AppWidgetManager.getInstance(context)
         val options = appWidgetManager.getAppWidgetOptions(appWidgetId)
         val minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
@@ -467,6 +468,34 @@ class UpdateService : Service() {
         // 200dp is a safe threshold where 3+ cells usually begin
         val isNarrow = minWidth in 1..<200
         val fontControlVisibility = if (isNarrow) View.GONE else View.VISIBLE
+
+        // Handle custom buttons from JSON
+        root.removeAllViews(R.id.widget_custom_buttons)
+        jsonObject?.optJSONArray("buttons")?.let { buttonsArray ->
+            for (i in 0 until buttonsArray.length()) {
+                val btnJson = buttonsArray.getJSONObject(i)
+                val text = btnJson.optString("text", "Button")
+                val url = btnJson.optString("url", "")
+                val color = btnJson.optString("color", "#000000")
+                
+                val btnView = RemoteViews(context.packageName, R.layout.widget_custom_button)
+                btnView.setTextViewText(R.id.btn_text, text)
+                btnView.setTextColor(R.id.btn_text, ColorUtils.parseColor(color))
+                
+                if (url.isNotEmpty()) {
+                    val browserIntent = Intent(Intent.ACTION_VIEW, url.toUri()).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                    val pendingIntent = android.app.PendingIntent.getActivity(
+                        context, appWidgetId + 50000 + i, browserIntent,
+                        android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
+                    )
+                    btnView.setOnClickPendingIntent(R.id.btn_text, pendingIntent)
+                }
+                
+                root.addView(R.id.widget_custom_buttons, btnView)
+            }
+        }
 
         // Setup toggle click on root
         val toggleIntent = Intent(context, UpdateService::class.java).apply {
@@ -525,6 +554,7 @@ class UpdateService : Service() {
         // Control visibility
         val isVisible = controlsVisible[appWidgetId] ?: false
         root.setViewVisibility(R.id.widget_controls, if (isVisible) View.VISIBLE else View.GONE)
+        root.setViewVisibility(R.id.widget_custom_buttons, if (isVisible) View.VISIBLE else View.GONE)
     }
 
     private fun createNotificationChannel() {

@@ -1,5 +1,8 @@
 {
   "update_interval_sec": 300,
+  "buttons": [
+    { "text": "Dashboard", "url": "https://stats.com", "color": "blue" }
+  ],
   "rows": [
     {
       "cols": [

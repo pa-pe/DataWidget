@@ -24,7 +24,16 @@ The widget is rendered based on a JSON object fetched from your URL.
 |:----------------------|:--------|:----------------------------------------------------------------------------------|
 | `update_interval_sec` | Integer | (Optional) How often to fetch new data from the server (in seconds). Default: 60. |
 | `next_update_at`      | Long    | (Optional) Exact Unix timestamp (seconds) for the next fetch. Overrides interval. |
+| `buttons`             | Array   | (Optional) A list of custom buttons to show when the widget is tapped.            |
 | `rows`                | Array   | **Required**. A list of row objects to render.                                    |
+
+### Button Object
+
+| Property | Type   | Description                                                                 |
+|:---------|:-------|:----------------------------------------------------------------------------|
+| `text`   | String | Label for the button.                                                       |
+| `url`    | String | URL to open when the button is clicked.                                     |
+| `color`  | String | Text color for the button label. Supports HEX or web names. Default: black. |
 
 ### Row Object
 

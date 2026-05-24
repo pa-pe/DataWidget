@@ -1,5 +1,8 @@
 {
   "update_interval_sec": 3600,
+  "buttons": [
+    { "text": "Help", "url": "https://github.com/pa-pe/DataWidget", "color": "#FF00FF" }
+  ],
   "rows": [
     {
       "cols": [
