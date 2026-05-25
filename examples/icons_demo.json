@@ -3,7 +3,7 @@
   "rows": [
     {
       "cols": [
-        { "text": "Market Trend", "weight": "12", "align": "center", "bold": true }
+        { "text": "Market Trend Sample", "weight": "12", "align": "center", "bold": true }
       ]
     },
     { "type": "h-separator" },
