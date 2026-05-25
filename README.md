@@ -51,6 +51,7 @@ A row is a horizontal container for columns.
 | `weight`           | String  | Width: `"auto"` (default), `"12"` (full), `"6"` (half), `"4"` (1/3), etc.                              |
 | `color`            | String  | Text or separator color. Supports HEX (`#RRGGBB`, `#RGB`) or web names (e.g., `green`, `yellowgreen`). |
 | `size`             | String  | Text size in `sp`. Supports absolute values (`"14"`) or relative offsets (`"+2"`, `"-1"`).             |
+| `icon`             | String  | (Optional) Icon name. See **[Available Icons](#available-icons)** section.                             |
 | `bold`             | Boolean | (Optional) Set to `true` for bold text.                                                                |
 | `italic`           | Boolean | (Optional) Set to `true` for italic text.                                                              |
 | `underline`        | Boolean | (Optional) Set to `true` to underline text.                                                            |
@@ -73,6 +74,23 @@ A row is a horizontal container for columns.
 }
 ```
 
+## Available Icons
+
+You can use any of the following names in the `"icon"` parameter. All icons are sourced from Google Material Symbols.
+
+| Category       | Icon Names                                                                                                                                       |
+|:---------------|:-------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Status**     | `check`, `error`, `info`, `warning`, `help`, `notifications`, `lock`, `lock_open`, `new_releases`, `priority_high`                               |
+| **Common**     | `person`, `group`, `favorite`, `star`, `star_border`, `star_half`, `share`, `send`, `email`, `call`, `public`, `celebration`, `push_pin`, `bolt` |
+| **Touch**      | `touch_app`, `ads_click`                                                                                                                         |
+| **Finance**    | `wallet`, `attach_money`, `trending_up`, `trending_down`, `account_balance`, `credit_card`, `shopping_cart`                                      |
+| **Weather**    | `sunny`, `cloud`, `rainy`, `thunderstorm`, `ac_unit` (snow), `thermostat`, `water_drop`                                                          |
+| **Devices**    | `smartphone`, `laptop`, `desktop_windows`, `watch`, `router`, `power`, `battery_full`, `wifi`, `bluetooth`                                       |
+| **Navigation** | `home`, `search`, `menu`, `arrow_back`, `arrow_forward`, `location_on`, `directions_car`, `flight`                                               |
+| **Media**      | `play_arrow`, `pause`, `stop`, `skip_next`, `skip_previous`, `volume_up`, `volume_down`, `mic`                                                   |
+| **Time**       | `schedule` (clock), `alarm`, `event` (calendar), `timer`                                                                                         |
+| **Editor**     | `edit`, `content_copy`, `content_cut`, `content_paste`, `delete`, `save`                                                                         |
+
 ## Examples
 
 You can find more JSON templates in the `/examples` directory of this repository:
@@ -80,6 +98,7 @@ You can find more JSON templates in the `/examples` directory of this repository
 - `separators_demo.json`: Showcases both vertical and horizontal separators with different colors.
 - `status_dashboard.json`: A system-style dashboard with multiple rows, custom alignment, and labels.
 - `crypto_prices.json`: Demonstrates a multi-column table with color-coded trends (green/red).
+- `icons_demo.json`: Shows how to use the built-in icon library for data visualization.
 - `style_demo.json`: Demonstrates text styling (bold, italic, etc.) and custom font sizes.
 
 ## Battery Optimization & Privacy

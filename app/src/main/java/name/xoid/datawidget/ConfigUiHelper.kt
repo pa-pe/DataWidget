@@ -115,6 +115,10 @@ class ConfigUiHelper(
         // Apply font size
         binding.previewText.textSize = selectedFontSize.toFloat()
         
+        // Sample icon for preview
+        binding.previewText.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_dialog_info, 0, 0, 0)
+        binding.previewText.compoundDrawablePadding = (4 * context.resources.displayMetrics.density).toInt()
+
         // Apply global radius and padding for consistency
         val density = context.resources.displayMetrics.density
         val radiusPx = AppSettings.getWidgetRadius(context) * density
@@ -215,10 +219,10 @@ class ConfigUiHelper(
             override fun getItem(position: Int): Any = colors[position]
             override fun getItemId(position: Int): Long = position.toLong()
             override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-                val view = convertView ?: View(context)
-                view.layoutParams = android.widget.AbsListView.LayoutParams(120, 120)
-                view.setBackgroundColor(colors[position])
-                view.setOnClickListener {
+                val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_color_tile, parent, false)
+                val colorView = view.findViewById<View>(R.id.color_tile)
+                colorView.setBackgroundColor(colors[position])
+                colorView.setOnClickListener {
                     onColorSelected(colors[position])
                     dialog.dismiss()
                 }

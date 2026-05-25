@@ -402,6 +402,19 @@ class UpdateService : Service() {
                     // Apply calculated font size
                     cellView.setTextViewTextSize(R.id.item_text, android.util.TypedValue.COMPLEX_UNIT_SP, individualFontSize.toFloat())
 
+                    // Handle Icon
+                    val iconName = colJson.optString("icon", "")
+                    if (iconName.isNotEmpty()) {
+                        val iconResId = context.resources.getIdentifier("ic_$iconName", "drawable", context.packageName)
+                        if (iconResId != 0) {
+                            cellView.setTextViewCompoundDrawablesRelative(R.id.item_text, iconResId, 0, 0, 0)
+                            // Note: Dynamic tinting of compound drawables is limited in RemoteViews, 
+                            // so icons will use their intrinsic color (black/white).
+                        }
+                    } else {
+                        cellView.setTextViewCompoundDrawablesRelative(R.id.item_text, 0, 0, 0, 0)
+                    }
+
                     val rawText = if (colJson.optString("type") == "countdown") {
                         val target = colJson.getLong("target_timestamp")
                         val diff = target - currentTimeSeconds

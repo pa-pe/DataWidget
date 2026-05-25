@@ -1,0 +1,29 @@
+{
+  "update_interval_sec": 3600,
+  "rows": [
+    {
+      "cols": [
+        { "text": "Market Trend", "weight": "12", "align": "center", "bold": true }
+      ]
+    },
+    { "type": "h-separator" },
+    {
+      "cols": [
+        { "text": "BTC Up", "icon": "trending_up", "color": "green" },
+        { "text": "ETH Down", "icon": "trending_down", "color": "red", "align": "right" }
+      ]
+    },
+    {
+      "cols": [
+        { "text": "Verified", "icon": "check", "color": "blue" },
+        { "text": "Warning", "icon": "error", "color": "orange", "align": "right" }
+      ]
+    },
+    {
+      "cols": [
+        { "text": "Weather:", "weight": "4" },
+        { "text": "Sunny Day", "icon": "sunny", "weight": "8", "align": "right" }
+      ]
+    }
+  ]
+}
