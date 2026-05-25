@@ -341,8 +341,7 @@ class UpdateService : Service() {
             }
 
             val rowsArray = jsonObject.getJSONArray("rows")
-            val baseFontSizeFromSource = libraryConfig?.baseFontSize ?: WidgetSettings.getFontSize(context, appWidgetId)
-            val baseFontSize = if (baseFontSizeFromSource != AppConfig.DEFAULT_WIDGET_FONT_SIZE) baseFontSizeFromSource else AppSettings.getWidgetFontSize(context)
+            val baseFontSize = libraryConfig?.baseFontSize ?: WidgetSettings.getFontSize(context, appWidgetId)
 
             val currentTimeSeconds = System.currentTimeMillis() / 1000
 

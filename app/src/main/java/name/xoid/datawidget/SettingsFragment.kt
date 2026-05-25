@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import name.xoid.datawidget.databinding.FragmentSettingsBinding
 import name.xoid.datawidget.databinding.DialogColorPickerBinding
 import kotlin.math.abs
+import androidx.core.graphics.toColorInt
 
 class SettingsFragment : Fragment() {
     private var _binding: FragmentSettingsBinding? = null
@@ -41,12 +42,6 @@ class SettingsFragment : Fragment() {
         binding.txtPaddingValue.text = getString(R.string.dp_unit, currentPadding)
         val paddingPx = (currentPadding * resources.displayMetrics.density).toInt()
         binding.previewContentContainer.setPadding(paddingPx, paddingPx, paddingPx, paddingPx)
-
-        // Load Font Size
-        val currentFontSize = AppSettings.getWidgetFontSize(requireContext())
-        binding.seekFontSize.progress = currentFontSize
-        binding.txtFontValue.text = getString(R.string.sp_unit, currentFontSize)
-        binding.previewText.textSize = currentFontSize.toFloat()
 
         // Load Panel Color
         val currentPanelColorHex = AppSettings.getPanelBgColor(requireContext())
@@ -94,21 +89,6 @@ class SettingsFragment : Fragment() {
                 binding.previewContentContainer.setPadding(px, px, px, px)
                 if (fromUser) {
                     AppSettings.saveWidgetPadding(requireContext(), progress)
-                    triggerWidgetUpdate()
-                }
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-
-        // Font Size Listener
-        binding.seekFontSize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val fontSize = progress.coerceAtLeast(6)
-                binding.txtFontValue.text = getString(R.string.sp_unit, fontSize)
-                binding.previewText.textSize = fontSize.toFloat()
-                if (fromUser) {
-                    AppSettings.saveWidgetFontSize(requireContext(), fontSize)
                     triggerWidgetUpdate()
                 }
             }
@@ -165,9 +145,9 @@ class SettingsFragment : Fragment() {
             Color.WHITE, Color.BLACK, Color.LTGRAY, Color.DKGRAY,
             Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW,
             Color.CYAN, Color.MAGENTA,
-            Color.parseColor("#1A237E"), Color.parseColor("#008000"),
-            Color.parseColor("#9ACD32"), Color.parseColor("#FFA500"),
-            Color.parseColor("#FFC0CB"), Color.parseColor("#87CEEB")
+            "#1A237E".toColorInt(), "#008000".toColorInt(),
+            "#9ACD32".toColorInt(), "#FFA500".toColorInt(),
+            "#FFC0CB".toColorInt(), "#87CEEB".toColorInt()
         )
 
         val gridBinding = DialogColorPickerBinding.inflate(layoutInflater)
@@ -184,7 +164,7 @@ class SettingsFragment : Fragment() {
                 val view = convertView ?: LayoutInflater.from(requireContext()).inflate(R.layout.item_color_tile, parent, false)
                 val colorView = view.findViewById<View>(R.id.color_tile)
                 colorView.setBackgroundColor(colors[position])
-                colorView.setOnClickListener {
+                view.setOnClickListener {
                     onColorSelected(colors[position])
                     dialog.dismiss()
                 }
