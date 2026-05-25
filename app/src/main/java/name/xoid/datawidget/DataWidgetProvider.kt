@@ -73,7 +73,7 @@ class DataWidgetProvider : AppWidgetProvider() {
 
             views.removeAllViews(R.id.widget_container)
             val loadingView = RemoteViews(context.packageName, R.layout.widget_col_12)
-            loadingView.setTextViewText(R.id.item_text, context.getString(R.string.msg_initializing))
+            loadingView.setTextViewText(R.id.item_text, context.getString(R.string.msg_waiting_config))
             views.addView(R.id.widget_container, loadingView)
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }

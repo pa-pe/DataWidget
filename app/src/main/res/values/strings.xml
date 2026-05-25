@@ -68,6 +68,7 @@
     <string name="toast_refreshing">Refreshing...</string>
     <string name="toast_no_pin_support">Your launcher does not support direct pinning</string>
     <string name="msg_initializing">Initializing...</string>
+    <string name="msg_waiting_config">Waiting for configuration...</string>
     <string name="msg_waiting_data">Waiting for data...</string>
     <string name="label_data_error">⚠ %1$s</string>
     <string name="label_layout_error">❌ Layout Error: %1$s</string>

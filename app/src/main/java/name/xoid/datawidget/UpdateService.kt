@@ -180,7 +180,13 @@ class UpdateService : Service() {
         val configId = WidgetSettings.getConfigId(this, appWidgetId)
         val configFromLibrary = if (configId != null) ConfigManager.getConfigs(this).find { it.id == configId } else null
         
-        val urlString = configFromLibrary?.url ?: (WidgetSettings.getUrl(this, appWidgetId) ?: AppConfig.DEFAULT_JSON_URL)
+        val urlString = configFromLibrary?.url ?: WidgetSettings.getUrl(this, appWidgetId)
+        
+        if (urlString.isNullOrEmpty()) {
+            Log.d("UpdateService", "No URL for widget $appWidgetId yet, skipping fetch.")
+            return
+        }
+
         val requestType = configFromLibrary?.requestType ?: WidgetSettings.getRequestType(this, appWidgetId)
         
         thread {
