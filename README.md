@@ -43,6 +43,9 @@ The widget is rendered based on a JSON object fetched from your URL.
 
 Data Widget includes **hundreds of built-in Material Design icons**. You can use any icon name from the official Google Symbols catalog.
 
+> [!IMPORTANT]
+> To keep the app size small, we include a vast but **finite** selection of icons. If you specify an icon name that is not built into the app, it will simply be hidden.
+
 | Category       | Icon Names                                                                                                                                 |
 |:---------------|:-------------------------------------------------------------------------------------------------------------------------------------------|
 | **Status**     | `check`, `error`, `info`, `warning`, `help`, `notifications`, `lock`, `lock_open`, `new_releases`, `priority_high`                         |
