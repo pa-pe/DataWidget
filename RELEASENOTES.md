@@ -1,6 +1,6 @@
 # Release Notes - Data Widget
 
-## v1.3.91 (Current)
+## v1.3.93 (Current)
 - **Expanded Icon Library**: Added support for 100+ built-in Material Design icons via the `icon` JSON parameter.
 - **Advanced Text Styling**: Individual cells now support `bold`, `italic`, `underline`, and `strike` flags.
 - **Flexible Font Sizes**: Support for absolute (e.g., `"16"`) and relative (e.g., `"+2"`, `"-1"`) font sizes per cell.

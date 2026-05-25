@@ -1,6 +1,7 @@
 package name.xoid.datawidget
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.util.Patterns
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.SeekBar
 import androidx.core.graphics.toColorInt
+import androidx.core.widget.TextViewCompat
 import androidx.core.widget.doAfterTextChanged
 import name.xoid.datawidget.databinding.DialogColorPickerBinding
 import name.xoid.datawidget.databinding.LayoutConfigFormBinding
@@ -115,9 +117,15 @@ class ConfigUiHelper(
         // Apply font size
         binding.previewText.textSize = selectedFontSize.toFloat()
         
-        // Sample icon for preview
-        binding.previewText.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_dialog_info, 0, 0, 0)
+        // Ensure text is visible on background
+        val brightness = (Color.red(selectedColor) * 299 + Color.green(selectedColor) * 587 + Color.blue(selectedColor) * 114) / 1000
+        val textColor = if (brightness > 128) Color.BLACK else Color.WHITE
+        binding.previewText.setTextColor(textColor)
+
+        // Sample icon for preview - matching the actual widget style
+        binding.previewText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_info, 0, 0, 0)
         binding.previewText.compoundDrawablePadding = (4 * context.resources.displayMetrics.density).toInt()
+        TextViewCompat.setCompoundDrawableTintList(binding.previewText, ColorStateList.valueOf(textColor))
 
         // Apply global radius and padding for consistency
         val density = context.resources.displayMetrics.density
@@ -126,10 +134,6 @@ class ConfigUiHelper(
         
         val paddingPx = (AppSettings.getWidgetPadding(context) * density).toInt()
         binding.previewContentContainer.setPadding(paddingPx, paddingPx, paddingPx, paddingPx)
-        
-        // Ensure text is visible on background
-        val brightness = (Color.red(selectedColor) * 299 + Color.green(selectedColor) * 587 + Color.blue(selectedColor) * 114) / 1000
-        binding.previewText.setTextColor(if (brightness > 128) Color.BLACK else Color.WHITE)
         
         // Adjust preview progress bar padding
         val progressPaddingPx = ((AppSettings.getWidgetRadius(context) + 2) * density).toInt()
