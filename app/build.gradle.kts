@@ -4,14 +4,14 @@ plugins {
 
 android {
     namespace = "name.xoid.datawidget"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "name.xoid.datawidget"
         minSdk = 27
         targetSdk = 36
-        versionCode = 93
-        versionName = "1.3.93"
+        versionCode = 95
+        versionName = "1.3.95"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
