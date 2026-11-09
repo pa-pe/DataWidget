@@ -108,4 +108,16 @@
     <string name="content_desc_font_inc">Increase Font</string>
     <string name="content_desc_font_dec">Decrease Font</string>
 
+    <!-- Notification permission banner -->
+    <string name="notif_perm_banner_title">🔔 Notifications permission required</string>
+    <string name="notif_perm_banner_message">Your widget data source may trigger status bar notifications. Notification decisions are made server-side — you will not receive them until you grant this app the Notifications permission.</string>
+    <string name="btn_i_understand">I understand</string>
+
+    <!-- Settings — Permissions section -->
+    <string name="section_permissions">PERMISSIONS</string>
+    <string name="notif_perm_label">Push Notifications</string>
+    <string name="notif_perm_granted">✅ Permission granted</string>
+    <string name="notif_perm_denied">❌ Not granted</string>
+    <string name="btn_grant_permission">Grant Permission</string>
+
 </resources>

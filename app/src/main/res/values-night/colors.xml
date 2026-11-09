@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="banner_warning_bg">#2D2200</color>
+    <color name="banner_warning_stroke">#FFB300</color>
+    <color name="banner_warning_text">#FFD54F</color>
+</resources>

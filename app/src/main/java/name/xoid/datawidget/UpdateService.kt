@@ -23,6 +23,8 @@ import android.view.Gravity
 import android.view.View
 import android.widget.RemoteViews
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
+import java.util.concurrent.ConcurrentHashMap
 import androidx.core.net.toUri
 import org.json.JSONObject
 import java.net.HttpURLConnection
@@ -43,6 +45,12 @@ class UpdateService : Service() {
     private val fetchError = mutableMapOf<Int, Boolean>()
     private val lastErrorMessage = mutableMapOf<Int, String>()
     private val controlsVisible = mutableMapOf<Int, Boolean>()
+
+    private data class PushTrackingState(
+        val contentHash: Int,
+        val clearWithJson: Boolean
+    )
+    private val activePushNotifications = ConcurrentHashMap<Int, ConcurrentHashMap<String, PushTrackingState>>()
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -135,9 +143,14 @@ class UpdateService : Service() {
             ACTION_REMOVE_WIDGETS -> {
                 val ids = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS)
                 ids?.let {
+                    val notifManager = getSystemService(NotificationManager::class.java)
                     it.forEach { id ->
                         widgetIds.remove(id)
                         cachedData.remove(id)
+                        // Cancel ALL notifications for this widget — it no longer exists
+                        activePushNotifications.remove(id)?.forEach { (pushId, _) ->
+                            notifManager.cancel(notifId(id, pushId))
+                        }
                     }
                 }
                 if (widgetIds.isEmpty()) stopSelf()
@@ -205,6 +218,8 @@ class UpdateService : Service() {
 
                 // Validate JSON
                 val json = JSONObject(content)
+
+                handlePushNotifications(appWidgetId, json)
 
                 cachedData[appWidgetId] = content
                 fetchError[appWidgetId] = false
@@ -592,14 +607,108 @@ class UpdateService : Service() {
         root.setViewVisibility(R.id.widget_controls, View.VISIBLE) // Visible inside panel
     }
 
+    private fun handlePushNotifications(appWidgetId: Int, jsonObject: JSONObject) {
+        // If the key is absent entirely, preserve existing notifications unchanged.
+        // An explicit empty array [] will still trigger reconciliation (clearing clearWithJson items).
+        if (!jsonObject.has("push_notifications")) return
+
+        val pushArray = jsonObject.optJSONArray("push_notifications")
+        val notificationManager = getSystemService(NotificationManager::class.java)
+
+        val pushMap = activePushNotifications.computeIfAbsent(appWidgetId) { ConcurrentHashMap() }
+        val seenIds = mutableSetOf<String>()
+
+        if (pushArray != null) {
+            for (i in 0 until pushArray.length()) {
+                val pushObj = pushArray.optJSONObject(i) ?: continue
+                val id = pushObj.optString("id", "").ifEmpty { continue }
+                val title = pushObj.optString("title", "")
+                val message = pushObj.optString("message", pushObj.optString("text", ""))
+                val priorityStr = pushObj.optString("priority", "default")
+                val clickUrl = pushObj.optString("click_url", "")
+                val dismissOnClick = pushObj.optBoolean("dismiss_on_click", true)
+                val clearWithJson = pushObj.optBoolean("clear_with_json", false)
+                val ongoing = pushObj.optBoolean("ongoing", false)
+                val silent = pushObj.optBoolean("silent", false)
+
+                seenIds.add(id)
+
+                // clearWithJson is lifecycle metadata, not visible content — excluded from hash
+                // to avoid spurious re-delivery when only that flag changes
+                val contentHash = "$title|$message|$priorityStr|$clickUrl|$dismissOnClick|$ongoing|$silent".hashCode()
+                val prevState = pushMap[id]
+
+                if (prevState == null || prevState.contentHash != contentHash) {
+                    val nId = notifId(appWidgetId, id)
+
+                    val priorityInt = when (priorityStr.lowercase(Locale.ROOT)) {
+                        "high", "max" -> NotificationCompat.PRIORITY_HIGH
+                        "low" -> NotificationCompat.PRIORITY_LOW
+                        else -> NotificationCompat.PRIORITY_DEFAULT
+                    }
+
+                    val builder = NotificationCompat.Builder(this, PUSH_CHANNEL_ID)
+                        .setContentTitle(title)
+                        .setContentText(message)
+                        .setSmallIcon(R.drawable.ic_launcher_foreground)
+                        .setPriority(priorityInt)
+                        .setAutoCancel(dismissOnClick)
+                        .setOngoing(ongoing)
+                        .setSilent(silent)
+
+                    if (clickUrl.isNotEmpty()) {
+                        val browserIntent = Intent(Intent.ACTION_VIEW, clickUrl.toUri()).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        }
+                        val pendingIntent = android.app.PendingIntent.getActivity(
+                            this,
+                            nId,
+                            browserIntent,
+                            android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
+                        )
+                        builder.setContentIntent(pendingIntent)
+                    }
+
+                    notificationManager.notify(nId, builder.build())
+                    pushMap[id] = PushTrackingState(contentHash, clearWithJson)
+                }
+            }
+        }
+
+        // Remove notifications whose IDs are no longer present in the JSON response
+        val iterator = pushMap.entries.iterator()
+        while (iterator.hasNext()) {
+            val (pushId, state) = iterator.next()
+            if (pushId !in seenIds) {
+                if (state.clearWithJson) {
+                    notificationManager.cancel(notifId(appWidgetId, pushId))
+                }
+                iterator.remove()
+            }
+        }
+    }
+
+    /** Returns a stable notification ID for a given widget + push notification ID pair. */
+    private fun notifId(widgetId: Int, pushId: String): Int =
+        (widgetId.toString() + "\u0000" + pushId).hashCode()
+
     private fun createNotificationChannel() {
-        val channel = NotificationChannel(
+        val manager = getSystemService(NotificationManager::class.java)
+        val serviceChannel = NotificationChannel(
             CHANNEL_ID,
             "Widget Update Service",
             NotificationManager.IMPORTANCE_LOW
         )
-        val manager = getSystemService(NotificationManager::class.java)
-        manager.createNotificationChannel(channel)
+        manager.createNotificationChannel(serviceChannel)
+
+        val pushChannel = NotificationChannel(
+            PUSH_CHANNEL_ID,
+            "Push Alerts",
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = "Push notifications received from widget JSON data"
+        }
+        manager.createNotificationChannel(pushChannel)
     }
 
     private fun createNotification(): Notification {
@@ -637,5 +746,6 @@ class UpdateService : Service() {
         const val ACTION_FONT_SIZE_DEC = "name.xoid.datawidget.ACTION_FONT_SIZE_DEC"
         const val NOTIFICATION_ID = 1
         const val CHANNEL_ID = "update_service_channel"
+        const val PUSH_CHANNEL_ID = "push_notifications_channel"
     }
 }

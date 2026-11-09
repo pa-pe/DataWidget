@@ -2,4 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="banner_warning_bg">#FFF8E1</color>
+    <color name="banner_warning_stroke">#FFB300</color>
+    <color name="banner_warning_text">#4A3800</color>
 </resources>

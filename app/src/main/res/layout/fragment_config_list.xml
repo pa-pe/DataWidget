@@ -13,6 +13,46 @@
         android:paddingHorizontal="24dp"
         android:paddingVertical="16dp">
 
+        <!-- Notification permission warning banner -->
+        <LinearLayout
+            android:id="@+id/banner_notif_permission"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_banner_warning"
+            android:orientation="vertical"
+            android:padding="14dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/notif_perm_banner_title"
+                android:textColor="@color/banner_warning_text"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/notif_perm_banner_message"
+                android:textColor="@color/banner_warning_text"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/banner_notif_dismiss"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="2dp"
+                android:text="@string/btn_i_understand"
+                android:textColor="@color/banner_warning_stroke" />
+
+        </LinearLayout>
+
         <LinearLayout
             android:id="@+id/items_container"
             android:layout_width="match_parent"

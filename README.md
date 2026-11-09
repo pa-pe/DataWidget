@@ -12,6 +12,7 @@ An Android application that allows you to display dynamic data from remote JSON 
     - **Cloud side**: Control text colors, alignment, and add icons via JSON.
     - **Local side**: Users can customize background, transparency, radius, and **base font size**.
 - **HTTP Request Control**: Choose between **GET** and **POST** methods for fetching data.
+- **Push Notifications**: Trigger status bar notifications directly from your remote JSON data with deduplication and state lifecycle controls.
 - **Developer Tools**: Built-in "Test" feature to validate your JSON connection and structure.
 
 ## JSON Schema Documentation
@@ -25,6 +26,7 @@ The widget is rendered based on a JSON object fetched from your URL.
 | `update_interval_sec` | Integer | (Optional) How often to fetch new data (in seconds). Default: 60. |
 | `next_update_at`      | Long    | (Optional) Exact Unix timestamp for the next fetch.               |
 | `buttons`             | Array   | (Optional) Custom buttons to show when tapped.                    |
+| `push_notifications`  | Array   | (Optional) List of status bar push notification objects.          |
 | `rows`                | Array   | **Required**. A list of row objects.                              |
 
 ### Column/Cell Object
@@ -38,6 +40,20 @@ The widget is rendered based on a JSON object fetched from your URL.
 | `icon`           | String  | (Optional) Icon name. See **[Available Icons](#available-icons)** section. |
 | `bold`, `italic` | Boolean | (Optional) Text styling flags.                                             |
 | `align`          | String  | `left`, `center`, `right`.                                                 |
+
+### Push Notification Object (`push_notifications`)
+
+| Property           | Type    | Default      | Description                                                                                              |
+|:-------------------|:--------|:-------------|:---------------------------------------------------------------------------------------------------------|
+| `id`               | String  | **Required** | Unique notification ID for deduplication and lifecycle tracking.                                         |
+| `title`            | String  | `""`         | Notification title text.                                                                                 |
+| `message` / `text` | String  | `""`         | Notification body message.                                                                               |
+| `priority`         | String  | `"default"`  | Priority level: `"low"`, `"default"`, `"high"`, `"max"`.                                                 |
+| `click_url`        | String  | `""`         | (Optional) URL opened when user taps the notification.                                                   |
+| `dismiss_on_click` | Boolean | `true`       | Auto-cancel notification when tapped by user (`setAutoCancel`).                                          |
+| `clear_with_json`  | Boolean | `false`      | Automatically remove notification from status bar when its `id` is no longer present in subsequent JSON. |
+| `ongoing`          | Boolean | `false`      | Make notification ongoing (user cannot swipe it away).                                                   |
+| `silent`           | Boolean | `false`      | Display notification silently without sound or vibration.                                                |
 
 ## Available Icons
 

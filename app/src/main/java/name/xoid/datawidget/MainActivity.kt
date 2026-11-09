@@ -1,5 +1,7 @@
 package name.xoid.datawidget
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.enableEdgeToEdge
@@ -11,6 +13,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import android.content.Intent
+import android.os.Build
 import name.xoid.datawidget.databinding.ActivityMainBinding
 import name.xoid.datawidget.databinding.LayoutConfigFormBinding
 import androidx.appcompat.app.AlertDialog
@@ -40,6 +43,13 @@ class MainActivity : AppCompatActivity() {
         // Ensure service is running
         val serviceIntent = Intent(this, UpdateService::class.java)
         startForegroundService(serviceIntent)
+
+        // POST_NOTIFICATIONS permission is required on Android 13+ (API 33)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), POST_NOTIFICATIONS_REQUEST_CODE)
+            }
+        }
 
         binding.fab.setOnClickListener {
             val editBinding = LayoutConfigFormBinding.inflate(layoutInflater)
@@ -120,5 +130,18 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        // Push notifications are optional; no action needed if the user denies
+    }
+
+    companion object {
+        private const val POST_NOTIFICATIONS_REQUEST_CODE = 101
     }
 }

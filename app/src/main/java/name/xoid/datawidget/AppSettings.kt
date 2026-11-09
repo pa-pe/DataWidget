@@ -9,6 +9,7 @@ object AppSettings {
     private const val KEY_WIDGET_PADDING = "widget_padding"
     private const val KEY_PANEL_BG_COLOR = "panel_bg_color"
     private const val KEY_PANEL_BG_ALPHA = "panel_bg_alpha"
+    private const val KEY_NOTIF_PERM_BANNER_DISMISSED = "notif_perm_banner_dismissed"
 
     fun saveWidgetRadius(context: Context, radiusDp: Int) {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit {
@@ -52,5 +53,16 @@ object AppSettings {
     fun getPanelBgAlpha(context: Context): Float {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             .getFloat(KEY_PANEL_BG_ALPHA, AppConfig.DEFAULT_PANEL_BG_ALPHA)
+    }
+
+    fun isNotifPermBannerDismissed(context: Context): Boolean {
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getBoolean(KEY_NOTIF_PERM_BANNER_DISMISSED, false)
+    }
+
+    fun setNotifPermBannerDismissed(context: Context) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit {
+            putBoolean(KEY_NOTIF_PERM_BANNER_DISMISSED, true)
+        }
     }
 }

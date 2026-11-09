@@ -1,5 +1,8 @@
 package name.xoid.datawidget
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -39,6 +42,25 @@ class ConfigListFragment : Fragment() {
         super.onResume()
         configs = ConfigManager.getConfigs(requireContext())
         refreshList()
+        updateNotifPermBanner()
+    }
+
+    private fun updateNotifPermBanner() {
+        val context = requireContext()
+
+        val shouldShow = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+            && context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+            && !AppSettings.isNotifPermBannerDismissed(context)
+
+        if (shouldShow) {
+            binding.bannerNotifPermission.visibility = View.VISIBLE
+            binding.bannerNotifDismiss.setOnClickListener {
+                AppSettings.setNotifPermBannerDismissed(context)
+                binding.bannerNotifPermission.visibility = View.GONE
+            }
+        } else {
+            binding.bannerNotifPermission.visibility = View.GONE
+        }
     }
 
     fun addConfig(config: WidgetConfig) {

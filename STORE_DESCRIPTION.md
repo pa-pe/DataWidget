@@ -12,6 +12,7 @@ Display dynamic JSON data with icons, custom styles, and per-second precision.
 *   **Flexible Grid System:** Build custom layouts using a Bootstrap-inspired grid (1 to 12 columns) with support for automatic text wrapping and natural alignment.
 *   **Rich Data Visualization:** Enhance your dashboard with **100+ built-in Material Design icons**. Use rich text styling including **bold**, *italic*, <u>underline</u>, and ~~strikethrough~~ directly from your JSON source.
 *   **Interactive Custom Buttons:** Add clickable actions to your widgets. Open specific dashboards, control smart home devices, or trigger webhooks via custom URLs on tap.
+*   **Push Notifications from JSON:** Trigger Android status bar alerts directly from your JSON payload with deduplication, priority levels, deep links, and flexible lifecycle controls.
 *   **Modern Overlay UI:** A redesigned controls panel that floats over your content, maximizing the display area while keeping setup and refresh tools just one tap away.
 *   **Per-Second Precision:** Built-in support for live countdown timers and real-time updates that stay accurate to the second.
 *   **Complete Visual Control:** Customize background colors, transparency, corner radius, and content padding to match your wallpaper perfectly.
