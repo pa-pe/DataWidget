@@ -43,6 +43,7 @@ class ConfigListFragment : Fragment() {
         configs = ConfigManager.getConfigs(requireContext())
         refreshList()
         updateNotifPermBanner()
+        updateServiceChannelBanner()
     }
 
     private fun updateNotifPermBanner() {
@@ -60,6 +61,33 @@ class ConfigListFragment : Fragment() {
             }
         } else {
             binding.bannerNotifPermission.visibility = View.GONE
+        }
+    }
+
+    private fun updateServiceChannelBanner() {
+        val context = requireContext()
+        val notificationManager = context.getSystemService(android.app.NotificationManager::class.java)
+        val channel = notificationManager?.getNotificationChannel(UpdateService.CHANNEL_ID)
+
+        val shouldShow = channel != null
+            && channel.importance != android.app.NotificationManager.IMPORTANCE_NONE
+            && !AppSettings.isServiceChannelBannerDismissed(context)
+
+        if (shouldShow) {
+            binding.bannerServiceChannel.visibility = View.VISIBLE
+            binding.btnOpenChannelSettings.setOnClickListener {
+                val intent = Intent(android.provider.Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
+                    putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, context.packageName)
+                    putExtra(android.provider.Settings.EXTRA_CHANNEL_ID, UpdateService.CHANNEL_ID)
+                }
+                startActivity(intent)
+            }
+            binding.bannerServiceDismiss.setOnClickListener {
+                AppSettings.setServiceChannelBannerDismissed(context)
+                binding.bannerServiceChannel.visibility = View.GONE
+            }
+        } else {
+            binding.bannerServiceChannel.visibility = View.GONE
         }
     }
 

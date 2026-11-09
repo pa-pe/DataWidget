@@ -521,7 +521,7 @@ class UpdateService : Service() {
         val hasCustomButtons = buttonsArray != null && buttonsArray.length() > 0
 
         if (hasCustomButtons) {
-            for (i in 0 until (buttonsArray.length() ?: 0)) {
+            for (i in 0 until buttonsArray.length()) {
                 val btnJson = buttonsArray.getJSONObject(i)
                 val text = btnJson.optString("text", "")
                 val url = btnJson.optString("url", "")
@@ -697,8 +697,10 @@ class UpdateService : Service() {
         val serviceChannel = NotificationChannel(
             CHANNEL_ID,
             "Widget Update Service",
-            NotificationManager.IMPORTANCE_LOW
-        )
+            NotificationManager.IMPORTANCE_MIN
+        ).apply {
+            description = getString(R.string.service_channel_desc)
+        }
         manager.createNotificationChannel(serviceChannel)
 
         val pushChannel = NotificationChannel(

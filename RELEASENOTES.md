@@ -1,6 +1,11 @@
 # Release Notes - Data Widget
 
-## v1.3.93 (Current)
+## v1.4.99 (Current)
+- **Push Notifications from JSON**: Trigger status bar notifications directly from your remote JSON payload via the `push_notifications` array.
+- **Deduplication & Lifecycle Control**: Built-in in-memory deduplication, priority levels, deep links (`click_url`), and flexible lifecycle options (`clear_with_json`, `dismiss_on_click`, `ongoing`, `silent`).
+- **Permissions & Service Control**: Integrated Permissions management in Settings and smart notification management for the background update service.
+
+## v1.3.93
 - **Expanded Icon Library**: Added support for 100+ built-in Material Design icons via the `icon` JSON parameter.
 - **Advanced Text Styling**: Individual cells now support `bold`, `italic`, `underline`, and `strike` flags.
 - **Flexible Font Sizes**: Support for absolute (e.g., `"16"`) and relative (e.g., `"+2"`, `"-1"`) font sizes per cell.

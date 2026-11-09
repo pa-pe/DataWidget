@@ -120,4 +120,10 @@
     <string name="notif_perm_denied">❌ Not granted</string>
     <string name="btn_grant_permission">Grant Permission</string>
 
+    <!-- Foreground Service Channel Settings & Banner -->
+    <string name="service_channel_desc">Recommended to disable in settings</string>
+    <string name="banner_service_channel_title">ℹ️ Persistent Service Notification</string>
+    <string name="banner_service_channel_message">You can safely disable the background service notification in system settings so it doesn\'t stick in your status bar. This won\'t affect widget updates.</string>
+    <string name="btn_open_channel_settings">Notification Settings</string>
+
 </resources>

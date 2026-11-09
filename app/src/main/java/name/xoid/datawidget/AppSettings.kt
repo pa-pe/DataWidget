@@ -10,6 +10,7 @@ object AppSettings {
     private const val KEY_PANEL_BG_COLOR = "panel_bg_color"
     private const val KEY_PANEL_BG_ALPHA = "panel_bg_alpha"
     private const val KEY_NOTIF_PERM_BANNER_DISMISSED = "notif_perm_banner_dismissed"
+    private const val KEY_SERVICE_CHANNEL_BANNER_DISMISSED = "service_channel_banner_dismissed"
 
     fun saveWidgetRadius(context: Context, radiusDp: Int) {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit {
@@ -63,6 +64,17 @@ object AppSettings {
     fun setNotifPermBannerDismissed(context: Context) {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit {
             putBoolean(KEY_NOTIF_PERM_BANNER_DISMISSED, true)
+        }
+    }
+
+    fun isServiceChannelBannerDismissed(context: Context): Boolean {
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getBoolean(KEY_SERVICE_CHANNEL_BANNER_DISMISSED, false)
+    }
+
+    fun setServiceChannelBannerDismissed(context: Context) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit {
+            putBoolean(KEY_SERVICE_CHANNEL_BANNER_DISMISSED, true)
         }
     }
 }

@@ -53,6 +53,60 @@
 
         </LinearLayout>
 
+        <!-- Service channel notification advice banner -->
+        <LinearLayout
+            android:id="@+id/banner_service_channel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_banner_warning"
+            android:orientation="vertical"
+            android:padding="14dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/banner_service_channel_title"
+                android:textColor="@color/banner_warning_text"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/banner_service_channel_message"
+                android:textColor="@color/banner_warning_text"
+                android:textSize="13sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="end"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/banner_service_dismiss"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/btn_i_understand"
+                    android:textColor="@color/banner_warning_stroke" />
+
+                <Button
+                    android:id="@+id/btn_open_channel_settings"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/btn_open_channel_settings"
+                    android:textColor="@color/banner_warning_stroke" />
+            </LinearLayout>
+
+        </LinearLayout>
+
         <LinearLayout
             android:id="@+id/items_container"
             android:layout_width="match_parent"
