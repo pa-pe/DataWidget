@@ -1,23 +1,36 @@
 package name.xoid.datawidget
 
+import android.Manifest
 import android.appwidget.AppWidgetManager
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.SeekBar
-import androidx.fragment.app.Fragment
-import name.xoid.datawidget.databinding.FragmentSettingsBinding
-import name.xoid.datawidget.databinding.DialogColorPickerBinding
-import kotlin.math.abs
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.graphics.toColorInt
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import name.xoid.datawidget.databinding.DialogColorPickerBinding
+import name.xoid.datawidget.databinding.FragmentSettingsBinding
+import kotlin.math.abs
 
 class SettingsFragment : Fragment() {
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ ->
+            updateNotificationPermissionUI()
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,6 +42,13 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Apply bottom system bar insets so content is not covered by navigation bar
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(v.paddingLeft, v.paddingTop, v.paddingRight, systemBars.bottom)
+            insets
+        }
 
         // Load Radius
         val currentRadius = AppSettings.getWidgetRadius(requireContext())
@@ -121,6 +141,56 @@ class SettingsFragment : Fragment() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
+
+        // Grant Notifications Permission Button
+        binding.btnGrantNotifPermission.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val isGranted = requireContext().checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+                if (!isGranted) {
+                    if (!shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                        // User might have denied previously or permanently denied; attempt to launch prompt or open settings
+                        try {
+                            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        } catch (_: Exception) {
+                            openAppSettings()
+                        }
+                    } else {
+                        requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateNotificationPermissionUI()
+    }
+
+    private fun updateNotificationPermissionUI() {
+        if (_binding == null) return
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val isGranted = requireContext().checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+            binding.containerPermissions.visibility = View.VISIBLE
+            binding.dividerPermissions.visibility = View.VISIBLE
+            if (isGranted) {
+                binding.txtNotifPermStatus.text = getString(R.string.notif_perm_granted)
+                binding.btnGrantNotifPermission.visibility = View.GONE
+            } else {
+                binding.txtNotifPermStatus.text = getString(R.string.notif_perm_denied)
+                binding.btnGrantNotifPermission.visibility = View.VISIBLE
+            }
+        } else {
+            binding.containerPermissions.visibility = View.GONE
+            binding.dividerPermissions.visibility = View.GONE
+        }
+    }
+
+    private fun openAppSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = Uri.fromParts("package", requireContext().packageName, null)
+        }
+        startActivity(intent)
     }
 
     private fun updatePreview() {
