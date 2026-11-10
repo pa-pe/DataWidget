@@ -50,7 +50,7 @@ The widget is rendered based on a JSON object fetched from your URL.
 | `message` / `text` | String  | `""`         | Notification body message.                                                                               |
 | `priority`         | String  | `"default"`  | Priority level: `"low"`, `"default"`, `"high"`, `"max"`.                                                 |
 | `click_url`        | String  | `""`         | (Optional) URL opened when user taps the notification.                                                   |
-| `dismiss_on_click` | Boolean | `true`       | Auto-cancel notification when tapped by user (`setAutoCancel`).                                          |
+| `dismiss_on_click` | Boolean | `true`       | Auto-cancel notification when tapped by user (requires `click_url`).                                     |
 | `clear_with_json`  | Boolean | `false`      | Automatically remove notification from status bar when its `id` is no longer present in subsequent JSON. |
 | `ongoing`          | Boolean | `false`      | Make notification ongoing (user cannot swipe it away).                                                   |
 | `silent`           | Boolean | `false`      | Display notification silently without sound or vibration.                                                |
