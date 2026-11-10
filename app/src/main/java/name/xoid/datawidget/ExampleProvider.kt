@@ -7,6 +7,7 @@ object ExampleProvider {
         WidgetConfig("Status Dashboard", "https://raw.githubusercontent.com/pa-pe/DataWidget/refs/heads/main/examples/status_dashboard.json"),
         WidgetConfig("Crypto Prices", "https://raw.githubusercontent.com/pa-pe/DataWidget/refs/heads/main/examples/crypto_prices.json"),
         WidgetConfig("Icons & Trends", "https://raw.githubusercontent.com/pa-pe/DataWidget/refs/heads/main/examples/icons_demo.json"),
-        WidgetConfig("Text Styling", "https://raw.githubusercontent.com/pa-pe/DataWidget/refs/heads/main/examples/style_demo.json")
+        WidgetConfig("Text Styling", "https://raw.githubusercontent.com/pa-pe/DataWidget/refs/heads/main/examples/style_demo.json"),
+        WidgetConfig("Push Notifications", "https://raw.githubusercontent.com/pa-pe/DataWidget/refs/heads/main/examples/push_alerts_demo.json")
     )
 }

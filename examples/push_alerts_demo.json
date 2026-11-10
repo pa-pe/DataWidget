@@ -1,0 +1,32 @@
+{
+  "update_interval_sec": 60,
+  "push_notifications": [
+    {
+      "id": "sample_push_id",
+      "title": "🚨 Demo Push Alert",
+      "message": "Push notification triggered successfully from widget JSON payload.",
+      "priority": "high",
+      "dismiss_on_click": true
+    }
+  ],
+  "rows": [
+    {
+      "cols": [
+        { "text": "PUSH ALERTS DEMO", "weight": "12", "align": "center", "bold": true, "color": "#FF5722", "size": "+2" }
+      ]
+    },
+    { "type": "h-separator", "color": "#444" },
+    {
+      "cols": [
+        { "text": "Notification Status:", "weight": "6" },
+        { "text": "Sent to System", "weight": "6", "align": "right", "color": "green", "bold": true }
+      ]
+    },
+    { "type": "h-separator", "color": "#444" },
+    {
+      "cols": [
+        { "text": "NOTE: Deduplication prevents duplicate alerts. To test push notification again after dismissing it, re-add this widget to your home screen.", "weight": "12", "align": "left", "italic": true, "size": "-1", "color": "#888888" }
+      ]
+    }
+  ]
+}
